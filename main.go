@@ -1,29 +1,20 @@
 package main
 
 import (
-	"log"
+	"fmt"
 	"net/http"
 	"os"
 )
 
-//Payload datatype I get from fixer.io
-/*type Payload struct {
-	base  string `json:"base"`
-	date  int    `json:"date"`
-	rates struct {
-		currency map[string]int
-	} `json:"rates"`
-}*/
-
 func main() {
-	http.HandleFunc("/", handler)
+	http.HandleFunc("/", hello)
+	fmt.Println("listening...")
 	err := http.ListenAndServe(":"+os.Getenv("PORT"), nil)
 	if err != nil {
-		log.Println("panic - ListenAndServe(14)")
+		panic(err)
 	}
-	//log.Println("http.ListenAndServe", http.ListenAndServe(":"+os.Getenv("PORT"), nil), nil)
 }
 
-func handler(w http.ResponseWriter, r *http.Request) {
-
+func hello(res http.ResponseWriter, req *http.Request) {
+	fmt.Fprintln(res, "hello, world")
 }
