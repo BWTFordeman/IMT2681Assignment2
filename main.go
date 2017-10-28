@@ -16,8 +16,8 @@ func main() {
 	}
 }
 
-func handler(res http.ResponseWriter, req *http.Request) {
-	fmt.Fprintln(res, "hello, world")
+func handler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintln(w, "hello, world")
 
 	timer := time.NewTimer(time.Second * 10).C
 
@@ -32,8 +32,7 @@ func handler(res http.ResponseWriter, req *http.Request) {
 		case <-timer:
 			fmt.Println("Timer expired")
 		case <-timerFinished:
-			fmt.Println("Done")
-			return
+			fmt.Fprintln(w, "Done")
 		}
 	}
 
