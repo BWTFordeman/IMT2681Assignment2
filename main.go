@@ -62,12 +62,8 @@ func handler(w http.ResponseWriter, r *http.Request) {
 				base = true
 			}
 		}
-		if base != true {
-			fmt.Fprintln(w, "error - base is false")
-			return
-		}
 
-		if err != nil {
+		if err != nil && base != true {
 			http.Error(w, "Invalid post value", http.StatusBadRequest)
 		} else {
 			fmt.Fprintln(w, "Data has been created in database:", p.WebhookURL, p.BaseCurrency, p.TargetCurrency, p.MinTriggerValue, p.MaxTriggerValue)
