@@ -15,11 +15,16 @@ func main() {
 		fmt.Println(err.Error(), " Panic or something")
 	}
 
-	timer := time.NewTimer(time.Second * 10).C
+}
 
+func handler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintln(w, "hello, world")
+
+	timer := time.NewTimer(time.Second * 10).C
+	fmt.Fprintln(w, "hello, world2")
 	timerFinished := make(chan bool)
 	go func() {
-		time.Sleep(time.Second * 2)
+		time.Sleep(time.Second * 10)
 		timerFinished <- true
 	}()
 
@@ -32,9 +37,4 @@ func main() {
 			http.HandleFunc("/", handler)
 		}
 	}
-}
-
-func handler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "hello, world")
-
 }
