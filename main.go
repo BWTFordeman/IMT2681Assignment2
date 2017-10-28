@@ -14,10 +14,6 @@ func main() {
 	if err != nil {
 		fmt.Println(err.Error(), " Panic or something")
 	}
-}
-
-func handler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "hello, world")
 
 	timer := time.NewTimer(time.Second * 10).C
 
@@ -33,7 +29,12 @@ func handler(w http.ResponseWriter, r *http.Request) {
 			fmt.Println("Timer expired")
 		case <-timerFinished:
 			fmt.Println("Done")
+			http.HandleFunc("/", handler)
 		}
 	}
+}
+
+func handler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintln(w, "hello, world")
 
 }
