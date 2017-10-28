@@ -9,11 +9,11 @@ import (
 
 //Postload datatype I get from fixer.io
 type Postload struct {
-	WebhookURL      string `json:"webhookURL"`
-	BaseCurrency    string `json:"baseCurrency"`
-	TargetCurrency  string `json:"targetCurrency"`
-	MinTriggerValue int    `json:"minTriggerValue"`
-	MaxTriggerValue int    `json:"maxTriggerValue"`
+	WebhookURL      string  `json:"webhookURL"`
+	BaseCurrency    string  `json:"baseCurrency"`
+	TargetCurrency  string  `json:"targetCurrency"`
+	MinTriggerValue float32 `json:"minTriggerValue"`
+	MaxTriggerValue float32 `json:"maxTriggerValue"`
 }
 
 /*
@@ -43,7 +43,6 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		decoder := json.NewDecoder(r.Body)
 		var p Postload
 		err := decoder.Decode(&p)
-		fmt.Fprintln(w, err.Error())
 		if err != nil {
 			http.Error(w, "Invalid post value", http.StatusBadRequest)
 		}
