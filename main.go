@@ -47,7 +47,6 @@ func main() {
 func handler(w http.ResponseWriter, r *http.Request) {
 	lang := [...]string{"EUR", "AUD", "BGN", "BRL", "CAD", "CHF", "CNY", "CZK", "DKK", "GBP", "HKD", "HRK", "HUF", "IDR", "ILS", "INR", "JPY", "KRW",
 		"MXN", "MYR", "NOK", "NZD", "PHP", "PLN", "RON", "RUB", "SEK", "SGD", "THB", "TRY", "USD", "ZAR"}
-	fmt.Fprintln(w, lang[0])
 
 	//Goto right service:
 	switch r.Method {
@@ -65,6 +64,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		}
 		if base != true {
 			fmt.Fprintln(w, "error - base is false")
+			return
 		}
 
 		if err != nil {
