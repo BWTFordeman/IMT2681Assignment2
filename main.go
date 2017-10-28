@@ -1,10 +1,31 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"os"
 )
+
+//Postload datatype I get from fixer.io
+type Postload struct {
+	WebhookURL      string `json:"url"`
+	BaseCurrency    string `json:"baseCurrency"`
+	TargetCurrency  string `json:"targetCurrency"`
+	MinTriggerValue int    `json:"minTriggerValue"`
+	MaxTriggerValue int    `json:"maxTriggerValue"`
+}
+
+/*
+//Make another one for requesting data from fixer.io
+type Payload struct {
+	WebhookURL   string `json:"url"`
+	BaseCurrency string `json:"baseCurrency"`
+	Date         int    `json:"date"`
+	Rates        struct {
+		currency map[string]int
+	} `json:"rates"`
+}*/
 
 func main() {
 	http.HandleFunc("/", handler)
@@ -19,16 +40,26 @@ func main() {
 func handler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "POST":
-		fmt.Fprintln(w, "POST")
+		decoder := json.NewDecoder(r.Body)
+		var p Postload
+		err := decoder.Decode(&p)
+		if err != nil {
+			http.Error(w, "Invalid post value", http.StatusBadRequest)
+		}
+		defer r.Body.Close()
+		fmt.Fprintln(w, "POST", p.WebhookURL)
+		//Can do stuff with p. ...
+
 	case "GET":
 		fmt.Fprintln(w, "GET")
+
 	case "DELETE":
-		fmt.Fprintln(w, "DELETE")
+
 	default:
 		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
 	}
 
-	fmt.Fprintln(w, "hello, world")
+	//Do stuff every 24 hour:
 
 	/*
 		timer := time.NewTimer(time.Hour * 24)
