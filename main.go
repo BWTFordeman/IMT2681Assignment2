@@ -32,7 +32,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		case <-timer:
 			fmt.Println("Timer expired")
 		case <-timerFinished:
-			fmt.Fprintln(w, "Done")
+			fmt.Println("Done")
 		}
 	}
 
