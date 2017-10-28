@@ -32,7 +32,7 @@ func main() {
 	fmt.Println("listening...")
 	err := http.ListenAndServe(":"+os.Getenv("PORT"), nil)
 	if err != nil {
-		fmt.Println(err.Error(), " Panic or something")
+		fmt.Println(err.Error(), "Panic or something")
 	}
 
 }
@@ -47,7 +47,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Invalid post value", http.StatusBadRequest)
 		}
 		defer r.Body.Close()
-		fmt.Fprintln(w, "POST", p.WebhookURL)
+		fmt.Fprintln(w, "POST", p.WebhookURL, p.BaseCurrency, p.TargetCurrency)
 		//Can do stuff with p. ...
 
 	case "GET":
