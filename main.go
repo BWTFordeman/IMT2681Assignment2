@@ -19,11 +19,11 @@ func main() {
 func handler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "POST":
-
+		fmt.Fprintln(w, "POST")
 	case "GET":
-
+		fmt.Fprintln(w, "GET")
 	case "DELETE":
-
+		fmt.Fprintln(w, "DELETE")
 	default:
 		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
 	}
