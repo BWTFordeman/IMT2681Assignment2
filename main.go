@@ -49,18 +49,24 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		"MXN", "MYR", "NOK", "NZD", "PHP", "PLN", "RON", "RUB", "SEK", "SGD", "THB", "TRY", "USD", "ZAR"}
 	fmt.Fprintln(w, lang[0])
 
+	//Goto right service:
 	switch r.Method {
 	case "POST":
 		decoder := json.NewDecoder(r.Body)
 		var p Postload
 		err := decoder.Decode(&p)
+
 		//Check if currencies are of valid types.
+		var base = false
 		for i := 0; i < len(lang); i++ {
-			if p.BaseCurrency != lang[i] && p.TargetCurrency != lang[i] {
-				fmt.Fprintln(w, "failure")
-				return
+			if p.BaseCurrency == lang[i] {
+				base = true
 			}
 		}
+		if base != true {
+			fmt.Fprintln(w, "error - base is false")
+		}
+
 		if err != nil {
 			http.Error(w, "Invalid post value", http.StatusBadRequest)
 		} else {
@@ -79,6 +85,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	}
 	//Add a function that runs every 24 hour.
 
+	fmt.Fprintln(w, "Daily func")
 	/*
 		timer := time.NewTimer(time.Hour * 24)
 	*/
