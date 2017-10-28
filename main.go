@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"time"
 )
 
 func main() {
@@ -20,8 +19,7 @@ func main() {
 func handler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, "hello, world")
 
-	timer := time.NewTimer(time.Second * 10).C
-	fmt.Fprintln(w, "hello, world2")
+	/*timer := time.NewTimer(time.Second * 10).C
 	timerFinished := make(chan bool)
 	go func() {
 		time.Sleep(time.Second * 10)
@@ -36,5 +34,5 @@ func handler(w http.ResponseWriter, r *http.Request) {
 			fmt.Println("Done")
 			http.HandleFunc("/", handler)
 		}
-	}
+	}*/
 }
