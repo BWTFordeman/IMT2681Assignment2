@@ -28,7 +28,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 	t := time.Now()
 	elapsed := t.Sub(startTime)
-	if elapsed < time.Second*10 {
+	if elapsed > time.Second*10 {
 		fmt.Fprintln(w, "ok", time.Now())
 	}
 
