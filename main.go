@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"os"
 )
@@ -28,12 +29,12 @@ type Payload struct {
 
 //Make another one for requesting data from fixer.io
 /*
-using the data:			fixer.io/latest?base=EUR;symbols=NOK
+using the data:			api.fixer.io/latest?base=EUR;symbols=NOK
 {"base": "EUR", "date":"2017-10-27", "rates":{"NOK":9.5348}}*/
 
 /*
 In the databse these data will be stored:
-webhookURL, baseCurrency, targetCurrency, minTriggerValue, maxTriggerValue, currentRate*/
+_id, webhookURL, baseCurrency, targetCurrency, minTriggerValue, maxTriggerValue, currentRate*/
 
 func main() {
 	http.HandleFunc("/", handler)
@@ -57,24 +58,29 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 		//Check if currencies are of valid types.
 		var base = false
+		var target = false
 		for i := 0; i < len(lang); i++ {
 			if p.BaseCurrency == lang[i] {
 				base = true
 			}
+			if p.TargetCurrency == lang[i] {
+				target = true
+			}
 		}
 
-		if err != nil || base != true {
+		if err != nil || base != true || target != true {
 			http.Error(w, "Invalid post value", http.StatusBadRequest)
-		} else {
+		} else { //Make the request a part of the database
 			fmt.Fprintln(w, "Data has been created in database:", p.WebhookURL, p.BaseCurrency, p.TargetCurrency, p.MinTriggerValue, p.MaxTriggerValue)
-			//Create p."data" in the database.
+			//put in database here.
+			fmt.Fprintln(w, "webhook id generated during registration: ") // add an id generated here.
 		}
 		defer r.Body.Close()
-
-	case "GET":
+		//GET AND DELETE WILL BE IN ANOTHER HANDLER
+	case "GET": //Show stuff from database
 		fmt.Fprintln(w, "GET")
 
-	case "DELETE":
+	case "DELETE": //Delete something from the database
 
 	default:
 		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
@@ -82,6 +88,11 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	//Add a function that runs every 24 hour.
 
 	fmt.Fprintln(w, "Daily func")
+	resp, err := http.Post("discordapp.com/api/webhooks/364353373165846528/2Vh8fgXrnsxYQ_MfZuNzW2zwFyN5drj2-wyDo_mUHGIqOiSNWDA-CRx6UmwtqR7D6BhJ", "text/xml", r.Body)
+	response, _ := ioutil.ReadAll(resp.Body)
+	fmt.Fprintln(w, "error: ", err.Error())
+	fmt.Fprintln(w, "response: ", response)
+
 	/*
 		timer := time.NewTimer(time.Hour * 24)
 	*/
