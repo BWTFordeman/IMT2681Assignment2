@@ -17,7 +17,6 @@ type Postload struct {
 }
 
 /*
-//Make another one for requesting data from fixer.io
 type Payload struct {
 	WebhookURL   string `json:"url"`
 	BaseCurrency string `json:"baseCurrency"`
@@ -27,6 +26,15 @@ type Payload struct {
 	} `json:"rates"`
 }*/
 
+//Make another one for requesting data from fixer.io
+/*
+using the data:			fixer.io/latest?base=EUR;symbols=NOK
+{"base": "EUR", "date":"2017-10-27", "rates":{"NOK":9.5348}}*/
+
+/*
+In the databse these data will be stored:
+webhookURL, baseCurrency, targetCurrency, minTriggerValue, maxTriggerValue, currentRate*/
+
 func main() {
 	http.HandleFunc("/", handler)
 	fmt.Println("listening...")
@@ -34,21 +42,31 @@ func main() {
 	if err != nil {
 		fmt.Println(err.Error(), "Panic or something")
 	}
-
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
+	lang := [...]string{"EUR", "AUD", "BGN", "BRL", "CAD", "CHF", "CNY", "CZK", "DKK", "GBP", "HKD", "HRK", "HUF", "IDR", "ILS", "INR", "JPY", "KRW",
+		"MXN", "MYR", "NOK", "NZD", "PHP", "PLN", "RON", "RUB", "SEK", "SGD", "THB", "TRY", "USD", "ZAR"}
+	fmt.Fprintln(w, lang[0])
+
 	switch r.Method {
 	case "POST":
 		decoder := json.NewDecoder(r.Body)
 		var p Postload
 		err := decoder.Decode(&p)
+		//Check if currencies are of valid types.
+		for i := 0; i < len(lang); i++ {
+			if p.BaseCurrency != lang[i] || p.TargetCurrency != lang[i] {
+				return
+			}
+		}
 		if err != nil {
 			http.Error(w, "Invalid post value", http.StatusBadRequest)
+		} else {
+			fmt.Fprintln(w, "Data has been created in database:", p.WebhookURL, p.BaseCurrency, p.TargetCurrency, p.MinTriggerValue, p.MaxTriggerValue)
+			//Create p."data" in the database.
 		}
 		defer r.Body.Close()
-		fmt.Fprintln(w, p.WebhookURL, p.BaseCurrency, p.TargetCurrency)
-		//Can do stuff with p. ...
 
 	case "GET":
 		fmt.Fprintln(w, "GET")
@@ -58,8 +76,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	default:
 		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
 	}
-
-	//Do stuff every 24 hour:
+	//Add a function that runs every 24 hour.
 
 	/*
 		timer := time.NewTimer(time.Hour * 24)
