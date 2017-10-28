@@ -43,11 +43,12 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		decoder := json.NewDecoder(r.Body)
 		var p Postload
 		err := decoder.Decode(&p)
+		fmt.Fprintln(w, err.Error())
 		if err != nil {
 			http.Error(w, "Invalid post value", http.StatusBadRequest)
 		}
 		defer r.Body.Close()
-		fmt.Fprintln(w, "POST", p.WebhookURL, p.BaseCurrency, p.TargetCurrency)
+		fmt.Fprintln(w, p.WebhookURL, p.BaseCurrency, p.TargetCurrency)
 		//Can do stuff with p. ...
 
 	case "GET":
