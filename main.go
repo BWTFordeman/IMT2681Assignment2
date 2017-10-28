@@ -57,6 +57,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		//Check if currencies are of valid types.
 		for i := 0; i < len(lang); i++ {
 			if p.BaseCurrency != lang[i] || p.TargetCurrency != lang[i] {
+				fmt.Fprintln(w, "failure")
 				return
 			}
 		}
