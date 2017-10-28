@@ -1,7 +1,9 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
+	"encoding/xml"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -35,6 +37,12 @@ using the data:			api.fixer.io/latest?base=EUR;symbols=NOK
 /*
 In the databse these data will be stored:
 _id, webhookURL, baseCurrency, targetCurrency, minTriggerValue, maxTriggerValue, currentRate*/
+
+//Person testing webhook stuff.
+type Person struct {
+	Name string
+	Age  int
+}
 
 func main() {
 	http.HandleFunc("/", handler)
@@ -86,9 +94,13 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
 	}
 	//Add a function that runs every 24 hour.
-
 	fmt.Fprintln(w, "Daily func")
-	resp, err := http.Post("discordapp.com/api/webhooks/364353373165846528/2Vh8fgXrnsxYQ_MfZuNzW2zwFyN5drj2-wyDo_mUHGIqOiSNWDA-CRx6UmwtqR7D6BhJ", "text/xml", r.Body)
+
+	//TESTING webhook
+	person := &Person{"John", 27}
+	buf, _ := xml.Marshal(person)
+	body := bytes.NewBuffer(buf)
+	resp, err := http.Post("discordapp.com/api/webhooks/364353373165846528/2Vh8fgXrnsxYQ_MfZuNzW2zwFyN5drj2-wyDo_mUHGIqOiSNWDA-CRx6UmwtqR7D6BhJ", "text/xml", body)
 	response, _ := ioutil.ReadAll(resp.Body)
 	fmt.Fprintln(w, "error: ", err.Error())
 	fmt.Fprintln(w, "response: ", response)
