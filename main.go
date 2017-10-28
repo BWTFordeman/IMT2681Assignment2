@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"time"
 )
 
 func main() {
@@ -17,11 +18,21 @@ func main() {
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
+	//if r.Method == "POST" {}
+	//else if r.Method == "GET" {}
+	//else if r.Method == "DELETE"{}
+	//else {http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)}
 	fmt.Fprintln(w, "hello, world")
 
-	/*timer := time.NewTimer(time.Second * 10).C
-	timerFinished := make(chan bool)
-	go func() {
+	startTime := time.Now()
+
+	t := time.Now()
+	elapsed := t.Sub(startTime)
+	if elapsed < time.Second*10 {
+		fmt.Fprintln(w, "ok", time.Now())
+	}
+
+	/*go func() {
 		time.Sleep(time.Second * 10)
 		timerFinished <- true
 	}()
