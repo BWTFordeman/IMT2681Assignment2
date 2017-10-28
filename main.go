@@ -9,7 +9,7 @@ import (
 
 //Postload datatype I get from fixer.io
 type Postload struct {
-	WebhookURL      string `json:"url"`
+	WebhookURL      string `json:"webhookURL"`
 	BaseCurrency    string `json:"baseCurrency"`
 	TargetCurrency  string `json:"targetCurrency"`
 	MinTriggerValue int    `json:"minTriggerValue"`
