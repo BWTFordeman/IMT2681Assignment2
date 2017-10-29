@@ -114,7 +114,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	message.TargetCurrency = "EUR"*/
 	message.Username = "Fordeman"
 	message.Content = (`{\n"baseCurrency": ` + `NOK\n}`)
-	msh, err := json.MarshalIndent(message, "\n", "  ")
+	msh, err := json.Marshal(message)
 	if err != nil {
 		fmt.Println(err.Error(), "Panic or something")
 	}
