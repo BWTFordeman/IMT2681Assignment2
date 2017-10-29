@@ -42,8 +42,10 @@ type Message struct {
 	Username string `json:"username"`
 }
 
+//invokeWebhook sends messages through webhooks created in the system
+//Must take away lang when database is added, and search through database for names instead.
 func invokeWebhook(w http.ResponseWriter, lang [32]string) {
-	//TESTING webhook						/May add validation for /slack or /github at end of webhookURL
+	//May add validation for /slack or /github at end of webhookURL
 	//Discord has content, slack has text
 	webhookURL := "https://discordapp.com/api/webhooks/373975976834498560/S9vVxSvLRHpA3V8-F-EAKoB2IGlf0kpUvrJSeYtFI7dzCcCNnkebfiLd0yngTc2UtwF-"
 
@@ -76,9 +78,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	lang := [...]string{"EUR", "AUD", "BGN", "BRL", "CAD", "CHF", "CNY", "CZK", "DKK", "GBP", "HKD", "HRK", "HUF", "IDR", "ILS", "INR", "JPY", "KRW",
 		"MXN", "MYR", "NOK", "NZD", "PHP", "PLN", "RON", "RUB", "SEK", "SGD", "THB", "TRY", "USD", "ZAR"}
 
-	//Goto right service:
-	switch r.Method {
-	case "POST":
+	if r.Method == "POST" {
 		decoder := json.NewDecoder(r.Body)
 		var p Postload
 		err := decoder.Decode(&p)
@@ -95,44 +95,29 @@ func handler(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 
+		//Create row in databse if valid:
 		if err != nil || base != true || target != true {
 			http.Error(w, "Invalid post value", http.StatusBadRequest)
 		} else {
-			fmt.Fprintln(w, "Data has been created in database:", p.WebhookURL, p.BaseCurrency, p.TargetCurrency, p.MinTriggerValue, p.MaxTriggerValue) //Do not use this!
 			//put in database here.
-			fmt.Fprintln(w, "webhook id generated during registration: ") // add an id generated here.
+			fmt.Fprintln(w, "Id for your webhook: ") // add an id generated here.
 		}
+
 		defer r.Body.Close()
-		//GET AND DELETE WILL BE IN ANOTHER HANDLER
-	case "GET": //Show stuff from database
-		fmt.Fprintln(w, "GET")
-
-	case "DELETE": //Delete something from the database
-
-	default:
+	} else { //If not post:
 		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
 	}
-	//Add a function that runs every 24 hour.
 
-	//Webhook:
-	invokeWebhook(w, lang)
+	//Webhook:		//Needs to be in another handler
+	//invokeWebhook(w, lang)
 
-	/*
-		timer := time.NewTimer(time.Hour * 24)
-	*/
-
-	/*go func() {
-		time.Sleep(time.Second * 10)
-		timerFinished <- true
-	}()
-
-	for {
-		select {
-		case <-timer:
-			fmt.Println("Timer expired")
-		case <-timerFinished:
-			fmt.Println("Done")
-			http.HandleFunc("/", handler)
-		}
-	}*/
 }
+
+/*//GET AND DELETE WILL BE IN ANOTHER HANDLER
+switch r.Method {
+
+case "GET": //Show stuff from database
+	fmt.Fprintln(w, "GET")
+
+case "DELETE": //Delete something from the database
+}*/
