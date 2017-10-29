@@ -111,7 +111,14 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err.Error(), "Panic or something")
 	}
 
-	http.DefaultClient.Post(webhookURL, "application/json", bytes.NewReader(msh))
+	res, err := http.DefaultClient.Post(webhookURL, "application/json", bytes.NewReader(msh))
+	if err != nil {
+		fmt.Println(err.Error(), "Panic or something")
+	}
+
+	if res.StatusCode != http.StatusOK {
+		fmt.Fprintln(w, res.StatusCode)
+	}
 
 	/*
 		timer := time.NewTimer(time.Hour * 24)
