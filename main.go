@@ -95,7 +95,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//Webhook:		//Needs to be in another handler
-	//invokeWebhook(w, lang)
+	invokeWebhook(w, lang)
 
 }
 
