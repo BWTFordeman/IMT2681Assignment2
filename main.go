@@ -38,7 +38,7 @@ _id, webhookURL, baseCurrency, targetCurrency, minTriggerValue, maxTriggerValue,
 
 //Message send stuff through webhook
 type Message struct {
-	Content
+	Content  `json:"content"`
 	Username string `json:"username"`
 }
 
