@@ -113,9 +113,8 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	message.MinTriggerValue = 4
 	message.TargetCurrency = "EUR"*/
 	message.Username = "Fordeman"
-	message.Content = `{\n"baseCurrency":\n}`
-	//msg := Message{Content{"baseCurrency", "targetCurrency", 5, 4, 7}, "CurrencyChecker"}
-	msh, err := json.Marshal(message)
+	message.Content = (`{\n"baseCurrency":\n}` + `NOK`)
+	msh, err := json.MarshalIndent(message, "", "   ")
 	if err != nil {
 		fmt.Println(err.Error(), "Panic or something")
 	}
