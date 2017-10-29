@@ -116,7 +116,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	}*/
 
 	//res, err := http.Post(webhookURL, "application/json", bytes.NewReader(msh))
-	res, err := http.PostForm(webhookURL, url.Values{"content": {"bar"}, "username": {"testName"}})
+	res, err := http.PostForm(webhookURL, url.Values{"content": {"bar\ntest"}, "username": {"testName"}})
 	if err != nil {
 		fmt.Println(err.Error(), "Panic or something")
 	}
