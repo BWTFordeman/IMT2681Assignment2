@@ -94,7 +94,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	//Add a function that runs every 24 hour.
 
 	//TESTING webhook
-	request := "https://discordapp.com/api/webhooks/364353373165846528/2Vh8fgXrnsxYQ_MfZuNzW2zwFyN5drj2-wyDo_mUHGIqOiSNWDA-CRx6UmwtqR7D6BhJ"
+	request := "https://discordapp.com/api/webhooks/373975976834498560/S9vVxSvLRHpA3V8-F-EAKoB2IGlf0kpUvrJSeYtFI7dzCcCNnkebfiLd0yngTc2UtwF-"
 
 	msg := Message{"Another go test", "CurrencyChecker"}
 
