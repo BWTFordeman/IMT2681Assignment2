@@ -36,10 +36,19 @@ using the data:			api.fixer.io/latest?base=EUR;symbols=NOK
 In the databse these data will be stored:
 _id, webhookURL, baseCurrency, targetCurrency, minTriggerValue, maxTriggerValue, currentRate*/
 
-//Person testing webhook stuff.
+//Message send stuff through webhook
 type Message struct {
-	Content  string `json:"content"`
+	Content
 	Username string `json:"username"`
+}
+
+//Content sent through the Message
+type Content struct {
+	BaseCurrency    string  `json:"baseCurrency"`
+	TargetCurrency  string  `json:"targetCurrency"`
+	CurrentRate     float32 `json:"currentRate"`
+	MinTriggerValue float32 `json:"minTriggerValue"`
+	MaxTriggerValue float32 `json:"maxTriggerValue"`
 }
 
 func main() {
@@ -76,8 +85,8 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 		if err != nil || base != true || target != true {
 			http.Error(w, "Invalid post value", http.StatusBadRequest)
-		} else { //Make the request a part of the database
-			fmt.Fprintln(w, "Data has been created in database:", p.WebhookURL, p.BaseCurrency, p.TargetCurrency, p.MinTriggerValue, p.MaxTriggerValue)
+		} else {
+			fmt.Fprintln(w, "Data has been created in database:", p.WebhookURL, p.BaseCurrency, p.TargetCurrency, p.MinTriggerValue, p.MaxTriggerValue) //Do not use this!
 			//put in database here.
 			fmt.Fprintln(w, "webhook id generated during registration: ") // add an id generated here.
 		}
@@ -94,16 +103,15 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	//Add a function that runs every 24 hour.
 
 	//TESTING webhook
-	request := "https://discordapp.com/api/webhooks/373975976834498560/S9vVxSvLRHpA3V8-F-EAKoB2IGlf0kpUvrJSeYtFI7dzCcCNnkebfiLd0yngTc2UtwF-"
+	webhookURL := "https://discordapp.com/api/webhooks/373975976834498560/S9vVxSvLRHpA3V8-F-EAKoB2IGlf0kpUvrJSeYtFI7dzCcCNnkebfiLd0yngTc2UtwF-"
 
-	msg := Message{"Another go test", "CurrencyChecker"}
-
+	msg := Message{Content{"baseCurrency", "targetCurrency", 5, 4, 7}, "CurrencyChecker"}
 	msh, err := json.Marshal(msg)
 	if err != nil {
 		fmt.Println(err.Error(), "Panic or something")
 	}
 
-	http.DefaultClient.Post(request, "application/json", bytes.NewReader(msh))
+	http.DefaultClient.Post(webhookURL, "application/json", bytes.NewReader(msh))
 
 	/*
 		timer := time.NewTimer(time.Hour * 24)
