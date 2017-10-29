@@ -32,26 +32,12 @@ type Payload struct {
 using the data:			api.fixer.io/latest?base=EUR;symbols=NOK
 {"base": "EUR", "date":"2017-10-27", "rates":{"NOK":9.5348}}*/
 
-/*
-In the databse these data will be stored:
-__id, webhookURL, baseCurrency, targetCurrency, minTriggerValue, maxTriggerValue, currentRate*/
-
-//Message send stuff through webhook to discord
-type Message struct {
-	Content  string `json:"content"`
-	Username string `json:"username"`
-}
-
 //invokeWebhook sends messages through webhooks created in the system
 //Must take away lang when database is added, and search through database for names instead.
 func invokeWebhook(w http.ResponseWriter, lang [32]string) {
 	//May add validation for /slack or /github at end of webhookURL
 	//Discord has content, slack has text
 	webhookURL := "https://discordapp.com/api/webhooks/373975976834498560/S9vVxSvLRHpA3V8-F-EAKoB2IGlf0kpUvrJSeYtFI7dzCcCNnkebfiLd0yngTc2UtwF-"
-
-	var message Message
-	message.Username = "Fordeman"
-	message.Content = (`{\n"baseCurrency": ` + `NOK\n}`)
 
 	res, err := http.PostForm(webhookURL, url.Values{"content": {"baseCurrency: " + lang[0]}, "username": {"CurrencyChecker"}})
 	if err != nil {
