@@ -94,16 +94,13 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
 	}
 	//Add a function that runs every 24 hour.
-	fmt.Fprintln(w, "Daily func")
 
 	//TESTING webhook
 	request := "https://discordapp.com/api/webhooks/364353373165846528/2Vh8fgXrnsxYQ_MfZuNzW2zwFyN5drj2-wyDo_mUHGIqOiSNWDA-CRx6UmwtqR7D6BhJ"
 
 	form := url.Values{
-		"username": {"xiaoming"},
-		"address":  {"beijing"},
-		"subject":  {"Hello"},
-		"from":     {"china"},
+		"content":    {"xiaoming"},
+		"avatar_url": {"https://encrypted-tbn0.gastic.com/images?q=tbn:ANd9GcQ193Rr5CoppqeJDORN3wrGQMIpyWawFAAi2NfjcWccoGd10zL"},
 	}
 
 	body := bytes.NewBufferString(form.Encode())
