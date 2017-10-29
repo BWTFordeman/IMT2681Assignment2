@@ -110,12 +110,12 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	message.Username = "Fordeman"
 	message.Content = (`{\n"baseCurrency": ` + `NOK\n}`)
 
-	msh, err := json.MarshalIndent(message, " ", "\n")
+	msh, err := json.Marshal(message)
 	if err != nil {
 		fmt.Fprintln(w, err.Error())
 	}
 
-	res, err := http.DefaultClient.Post(webhookURL, "application/json", bytes.NewReader(msh))
+	res, err := http.Post(webhookURL, "application/json", bytes.NewReader(msh))
 	if err != nil {
 		fmt.Println(err.Error(), "Panic or something")
 	}
