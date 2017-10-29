@@ -107,16 +107,12 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	webhookURL := "https://discordapp.com/api/webhooks/373975976834498560/S9vVxSvLRHpA3V8-F-EAKoB2IGlf0kpUvrJSeYtFI7dzCcCNnkebfiLd0yngTc2UtwF-"
 
 	var message Message
-	/*message.BaseCurrency = "NOK"
-	message.CurrentRate = 5
-	message.MaxTriggerValue = 7
-	message.MinTriggerValue = 4
-	message.TargetCurrency = "EUR"*/
 	message.Username = "Fordeman"
 	message.Content = (`{\n"baseCurrency": ` + `NOK\n}`)
-	msh, err := json.Marshal(message)
+
+	msh, err := json.MarshalIndent(message, " ", "\n")
 	if err != nil {
-		fmt.Println(err.Error(), "Panic or something")
+		fmt.Fprintln(w, err.Error())
 	}
 
 	res, err := http.DefaultClient.Post(webhookURL, "application/json", bytes.NewReader(msh))
@@ -124,8 +120,10 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err.Error(), "Panic or something")
 	}
 
-	if res.StatusCode != http.StatusOK {
+	if res.StatusCode == 200 || res.StatusCode == 204 {
 		fmt.Fprintln(w, "statuscode: ", res.StatusCode)
+	} else {
+		fmt.Fprintln(w, "Wrong status: ", res.StatusCode)
 	}
 
 	/*
