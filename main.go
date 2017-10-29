@@ -3,10 +3,10 @@ package main
 import (
 	"bytes"
 	"encoding/json"
-	"encoding/xml"
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"os"
 )
 
@@ -97,13 +97,26 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, "Daily func")
 
 	//TESTING webhook
-	person := &Person{"John", 27}
-	buf, _ := xml.Marshal(person)
-	body := bytes.NewBuffer(buf)
-	resp, err := http.Post("discordapp.com/api/webhooks/364353373165846528/2Vh8fgXrnsxYQ_MfZuNzW2zwFyN5drj2-wyDo_mUHGIqOiSNWDA-CRx6UmwtqR7D6BhJ", "text/xml", body)
-	response, _ := ioutil.ReadAll(resp.Body)
-	fmt.Fprintln(w, "error: ", err.Error())
-	fmt.Fprintln(w, "response: ", response)
+	request := "https://discordapp.com/api/webhooks/364353373165846528/2Vh8fgXrnsxYQ_MfZuNzW2zwFyN5drj2-wyDo_mUHGIqOiSNWDA-CRx6UmwtqR7D6BhJ"
+
+	form := url.Values{
+		"username": {"xiaoming"},
+		"address":  {"beijing"},
+		"subject":  {"Hello"},
+		"from":     {"china"},
+	}
+
+	body := bytes.NewBufferString(form.Encode())
+	rsp, err := http.Post(request, "application/json", body)
+	if err != nil {
+		http.Error(w, "Invalid request", http.StatusBadRequest)
+	}
+	defer rsp.Body.Close()
+	bodyByte, err := ioutil.ReadAll(rsp.Body)
+	if err != nil {
+		http.Error(w, "Invalid request", http.StatusBadRequest)
+	}
+	fmt.Fprintln(w, string(bodyByte))
 
 	/*
 		timer := time.NewTimer(time.Hour * 24)
