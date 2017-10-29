@@ -1,10 +1,10 @@
 package main
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 	"os"
 )
 
@@ -110,12 +110,13 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	message.Username = "Fordeman"
 	message.Content = (`{\n"baseCurrency": ` + `NOK\n}`)
 
-	msh, err := json.Marshal(message)
+	/*msh, err := json.Marshal(message)
 	if err != nil {
 		fmt.Fprintln(w, err.Error())
-	}
+	}*/
 
-	res, err := http.Post(webhookURL, "application/json", bytes.NewReader(msh))
+	//res, err := http.Post(webhookURL, "application/json", bytes.NewReader(msh))
+	res, err := http.PostForm(webhookURL, url.Values{"content": {"bar"}, "username": {"testName"}})
 	if err != nil {
 		fmt.Println(err.Error(), "Panic or something")
 	}
