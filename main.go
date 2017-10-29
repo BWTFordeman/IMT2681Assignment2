@@ -105,8 +105,15 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	//TESTING webhook
 	webhookURL := "https://discordapp.com/api/webhooks/373975976834498560/S9vVxSvLRHpA3V8-F-EAKoB2IGlf0kpUvrJSeYtFI7dzCcCNnkebfiLd0yngTc2UtwF-"
 
-	msg := Message{Content{"baseCurrency", "targetCurrency", 5, 4, 7}, "CurrencyChecker"}
-	msh, err := json.Marshal(msg)
+	var message Message
+	message.BaseCurrency = "NOK"
+	message.CurrentRate = 5
+	message.MaxTriggerValue = 7
+	message.MinTriggerValue = 4
+	message.TargetCurrency = "EUR"
+	message.Username = "Fordeman"
+	//msg := Message{Content{"baseCurrency", "targetCurrency", 5, 4, 7}, "CurrencyChecker"}
+	msh, err := json.Marshal(message)
 	if err != nil {
 		fmt.Println(err.Error(), "Panic or something")
 	}
