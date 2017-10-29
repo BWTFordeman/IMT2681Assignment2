@@ -42,14 +42,26 @@ type Message struct {
 	Username string `json:"username"`
 }
 
-//Content sent through the Message
-/*type Content struct {
-	BaseCurrency    string  `json:"baseCurrency"`
-	TargetCurrency  string  `json:"targetCurrency"`
-	CurrentRate     float32 `json:"currentRate"`
-	MinTriggerValue float32 `json:"minTriggerValue"`
-	MaxTriggerValue float32 `json:"maxTriggerValue"`
-}*/
+func invokeWebhook(w http.ResponseWriter, lang [32]string) {
+	//TESTING webhook						/May add validation for /slack or /github at end of webhookURL
+	//Discord has content, slack has text
+	webhookURL := "https://discordapp.com/api/webhooks/373975976834498560/S9vVxSvLRHpA3V8-F-EAKoB2IGlf0kpUvrJSeYtFI7dzCcCNnkebfiLd0yngTc2UtwF-"
+
+	var message Message
+	message.Username = "Fordeman"
+	message.Content = (`{\n"baseCurrency": ` + `NOK\n}`)
+
+	res, err := http.PostForm(webhookURL, url.Values{"content": {"baseCurrency: " + lang[0]}, "username": {"CurrencyChecker"}})
+	if err != nil {
+		fmt.Println(err.Error(), "Panic or something")
+	}
+
+	if res.StatusCode == 200 || res.StatusCode == 204 {
+		fmt.Fprintln(w, "statuscode: ", res.StatusCode)
+	} else {
+		fmt.Fprintln(w, "Wrong status: ", res.StatusCode)
+	}
+}
 
 func main() {
 	http.HandleFunc("/", handler)
@@ -102,30 +114,8 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	}
 	//Add a function that runs every 24 hour.
 
-	//TESTING webhook						/May add validation for /slack or /github at end of webhookURL
-	//Discord has content, slack has text
-	webhookURL := "https://discordapp.com/api/webhooks/373975976834498560/S9vVxSvLRHpA3V8-F-EAKoB2IGlf0kpUvrJSeYtFI7dzCcCNnkebfiLd0yngTc2UtwF-"
-
-	var message Message
-	message.Username = "Fordeman"
-	message.Content = (`{\n"baseCurrency": ` + `NOK\n}`)
-
-	/*msh, err := json.Marshal(message)
-	if err != nil {
-		fmt.Fprintln(w, err.Error())
-	}*/
-
-	//res, err := http.Post(webhookURL, "application/json", bytes.NewReader(msh))
-	res, err := http.PostForm(webhookURL, url.Values{"content": {"bar\ntest"}, "username": {"testName"}})
-	if err != nil {
-		fmt.Println(err.Error(), "Panic or something")
-	}
-
-	if res.StatusCode == 200 || res.StatusCode == 204 {
-		fmt.Fprintln(w, "statuscode: ", res.StatusCode)
-	} else {
-		fmt.Fprintln(w, "Wrong status: ", res.StatusCode)
-	}
+	//Webhook:
+	invokeWebhook(w, lang)
 
 	/*
 		timer := time.NewTimer(time.Hour * 24)
