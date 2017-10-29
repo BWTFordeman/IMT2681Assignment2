@@ -4,9 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/http"
-	"net/url"
 	"os"
 )
 
@@ -39,9 +37,9 @@ In the databse these data will be stored:
 _id, webhookURL, baseCurrency, targetCurrency, minTriggerValue, maxTriggerValue, currentRate*/
 
 //Person testing webhook stuff.
-type Person struct {
-	Name string
-	Age  int
+type Message struct {
+	Content  string `json:"content"`
+	Username string `json:"username"`
 }
 
 func main() {
@@ -98,22 +96,14 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	//TESTING webhook
 	request := "https://discordapp.com/api/webhooks/364353373165846528/2Vh8fgXrnsxYQ_MfZuNzW2zwFyN5drj2-wyDo_mUHGIqOiSNWDA-CRx6UmwtqR7D6BhJ"
 
-	form := url.Values{
-		"content":    {"xiaoming"},
-		"avatar_url": {"https://encrypted-tbn0.gastic.com/images?q=tbn:ANd9GcQ193Rr5CoppqeJDORN3wrGQMIpyWawFAAi2NfjcWccoGd10zL"},
+	msg := Message{"Another go test", "CurrencyChecker"}
+
+	msh, err := json.Marshal(msg)
+	if err != nil {
+		fmt.Println(err.Error(), "Panic or something")
 	}
 
-	body := bytes.NewBufferString(form.Encode())
-	rsp, err := http.Post(request, "application/json", body)
-	if err != nil {
-		http.Error(w, "Invalid request", http.StatusBadRequest)
-	}
-	defer rsp.Body.Close()
-	bodyByte, err := ioutil.ReadAll(rsp.Body)
-	if err != nil {
-		http.Error(w, "Invalid request", http.StatusBadRequest)
-	}
-	fmt.Fprintln(w, string(bodyByte))
+	http.DefaultClient.Post(request, "application/json", bytes.NewReader(msh))
 
 	/*
 		timer := time.NewTimer(time.Hour * 24)
