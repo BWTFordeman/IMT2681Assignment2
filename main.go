@@ -103,7 +103,11 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err.Error(), "Panic or something")
 	}
 
-	http.DefaultClient.Post(request, "application/json", bytes.NewReader(msh))
+	res, err := http.DefaultClient.Post(request, "application/json", bytes.NewReader(msh))
+
+	if res.StatusCode != http.StatusOK {
+		fmt.Fprintln(w, "Wrong status", res.StatusCode)
+	}
 
 	/*
 		timer := time.NewTimer(time.Hour * 24)
