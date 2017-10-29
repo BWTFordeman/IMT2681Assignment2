@@ -38,18 +38,18 @@ _id, webhookURL, baseCurrency, targetCurrency, minTriggerValue, maxTriggerValue,
 
 //Message send stuff through webhook
 type Message struct {
-	Content  `json:"content"`
+	Content  string `json:"content"`
 	Username string `json:"username"`
 }
 
 //Content sent through the Message
-type Content struct {
+/*type Content struct {
 	BaseCurrency    string  `json:"baseCurrency"`
 	TargetCurrency  string  `json:"targetCurrency"`
 	CurrentRate     float32 `json:"currentRate"`
 	MinTriggerValue float32 `json:"minTriggerValue"`
 	MaxTriggerValue float32 `json:"maxTriggerValue"`
-}
+}*/
 
 func main() {
 	http.HandleFunc("/", handler)
@@ -106,12 +106,13 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	webhookURL := "https://discordapp.com/api/webhooks/373975976834498560/S9vVxSvLRHpA3V8-F-EAKoB2IGlf0kpUvrJSeYtFI7dzCcCNnkebfiLd0yngTc2UtwF-"
 
 	var message Message
-	message.BaseCurrency = "NOK"
+	/*message.BaseCurrency = "NOK"
 	message.CurrentRate = 5
 	message.MaxTriggerValue = 7
 	message.MinTriggerValue = 4
-	message.TargetCurrency = "EUR"
+	message.TargetCurrency = "EUR"*/
 	message.Username = "Fordeman"
+	message.Content = "testing"
 	//msg := Message{Content{"baseCurrency", "targetCurrency", 5, 4, 7}, "CurrencyChecker"}
 	msh, err := json.Marshal(message)
 	if err != nil {
