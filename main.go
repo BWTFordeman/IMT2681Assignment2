@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+
+	mgo "gopkg.in/mgo.v2"
 )
 
 //Postload data retrieved from adding webhook
@@ -67,15 +69,16 @@ func main() {
 func root(w http.ResponseWriter, r *http.Request) {
 	lang := [...]string{"EUR", "AUD", "BGN", "BRL", "CAD", "CHF", "CNY", "CZK", "DKK", "GBP", "HKD", "HRK", "HUF", "IDR", "ILS", "INR", "JPY", "KRW",
 		"MXN", "MYR", "NOK", "NZD", "PHP", "PLN", "RON", "RUB", "SEK", "SGD", "THB", "TRY", "USD", "ZAR"}
-	/*USER := os.Getenv("DB_USER")
-	PASSWORD := os.Getenv("DB_PASSWORD")
-	tempstring := ("mongodb://" + USER + ":" + PASSWORD + "@ds241055.mlab.com:41055/imt2681")
+	//USER := os.Getenv("DB_USER")
+	//PASSWORD := os.Getenv("DB_PASSWORD")
+	tempstring := ("mongodb://" + "Fordeman" + ":" + "12345" + "@ds241055.mlab.com:41055/imt2681")
+
 	session, err := mgo.Dial(tempstring)
 
 	if err != nil {
-		//panic(err)
+		panic(err)
 	}
-	defer session.Close()*/
+	defer session.Close()
 
 	if r.Method == "POST" {
 		decoder := json.NewDecoder(r.Body)
