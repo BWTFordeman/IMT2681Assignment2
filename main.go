@@ -76,7 +76,7 @@ func root(w http.ResponseWriter, r *http.Request) {
 	session, err := mgo.Dial(tempstring)
 
 	if err != nil {
-		//panic(err)
+		panic(err)
 	}
 	defer session.Close()
 
@@ -85,6 +85,9 @@ func root(w http.ResponseWriter, r *http.Request) {
 		var p Postload
 		var d Webhook
 		err := decoder.Decode(&p)
+		if err != nil {
+			fmt.Fprintln(w, "Error decoding webhhok post", err.Error())
+		}
 
 		//Check if currencies are of valid types.
 		var base = false
@@ -100,7 +103,7 @@ func root(w http.ResponseWriter, r *http.Request) {
 
 		//Create row in databse if valid:
 		if err != nil || base != true || target != true {
-			http.Error(w, "Invalid post value", http.StatusBadRequest)
+			//http.Error(w, "Invalid post value", http.StatusBadRequest)
 		} else { //Create data in database:
 			d.BaseCurrency = p.BaseCurrency
 			d.MaxTriggerValue = p.MaxTriggerValue
