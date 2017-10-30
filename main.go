@@ -8,6 +8,7 @@ import (
 	"os"
 
 	"gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2/bson"
 )
 
 //Postload data retrieved from adding webhook
@@ -106,11 +107,13 @@ func root(w http.ResponseWriter, r *http.Request) {
 			d.MinTriggerValue = p.MinTriggerValue
 			d.TargetCurrency = p.TargetCurrency
 			d.WebhookURL = p.WebhookURL
-			d.CurrentRate = 0
+			d.CurrentRate = 0 //Set equal to value in database relative to base and TargetCurrency
 			err := session.DB(tempstring).C("testcollection").Insert(d)
 			if err != nil {
 				fmt.Fprintln(w, "Error in Insert()", err.Error())
 			}
+			id := session.DB(tempstring).C("testcollection").Find(bson.M{"targetCurrency": "NOK"})
+			fmt.Fprintln(w, id)
 			fmt.Fprintln(w, "Id for your webhook: ") // add an id generated here.
 		}
 
