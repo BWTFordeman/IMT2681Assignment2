@@ -1,1 +1,2 @@
-web: webhook
+web: webhookserver
+worker: fixerworker
