@@ -113,8 +113,7 @@ func root(w http.ResponseWriter, r *http.Request) {
 				fmt.Fprintln(w, "Error in Insert()", err.Error())
 			}
 			id := session.DB(tempstring).C("testcollection").Find(bson.M{"targetCurrency": "NOK"})
-			fmt.Fprintln(w, id)
-			fmt.Fprintln(w, "Id for your webhook: ") // add an id generated here.
+			fmt.Fprintln(w, "Error with find()", id) // Sends back an id + statuscode
 		}
 
 		defer r.Body.Close()
