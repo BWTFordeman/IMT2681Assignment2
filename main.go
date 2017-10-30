@@ -112,8 +112,8 @@ func root(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				//fmt.Fprintln(w, "Error in Insert()")
 			}
-			//id := session.DB(tempstring).C("testcollection").Find(bson.M{"targetCurrency": "NOK"})
-			//fmt.Fprintln(w, "Error with find()", id) // Sends back an id + statuscode*/
+			//id := session.DB(tempstring).C("testcollection").Find(bson.M{"targetCurrency": "NOK"})*/
+			fmt.Fprintln(w, "ID:" /*, id*/) // Sends back an id + statuscode
 		}
 
 		defer r.Body.Close()
