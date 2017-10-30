@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+
+	"gopkg.in/mgo.v2"
 )
 
 //Postload data retrieved from adding webhook
@@ -67,10 +69,19 @@ func main() {
 func root(w http.ResponseWriter, r *http.Request) {
 	lang := [...]string{"EUR", "AUD", "BGN", "BRL", "CAD", "CHF", "CNY", "CZK", "DKK", "GBP", "HKD", "HRK", "HUF", "IDR", "ILS", "INR", "JPY", "KRW",
 		"MXN", "MYR", "NOK", "NZD", "PHP", "PLN", "RON", "RUB", "SEK", "SGD", "THB", "TRY", "USD", "ZAR"}
+	USER := os.Getenv("DB_USER")
+	PASSWORD := os.Getenv("DB_PASSWORD")
+	tempstring := ("mongodb://" + USER + ":" + PASSWORD + "@ds241055.mlab.com:41055/imt2681")
+	session, err := mgo.Dial(tempstring)
+	if err != nil {
+		panic(err)
+	}
+	defer session.Close()
 
 	if r.Method == "POST" {
 		decoder := json.NewDecoder(r.Body)
 		var p Postload
+		var d Webhook
 		err := decoder.Decode(&p)
 
 		//Check if currencies are of valid types.
@@ -89,7 +100,16 @@ func root(w http.ResponseWriter, r *http.Request) {
 		if err != nil || base != true || target != true {
 			http.Error(w, "Invalid post value", http.StatusBadRequest)
 		} else { //Create data in database:
-
+			d.BaseCurrency = p.BaseCurrency
+			d.MaxTriggerValue = p.MaxTriggerValue
+			d.MinTriggerValue = p.MinTriggerValue
+			d.TargetCurrency = p.TargetCurrency
+			d.WebhookURL = p.WebhookURL
+			d.CurrentRate = 0
+			err := session.DB(tempstring).C("testcollection").Insert(d)
+			if err != nil {
+				fmt.Fprintln(w, "Error in Insert()", err.Error())
+			}
 			fmt.Fprintln(w, "Id for your webhook: ") // add an id generated here.
 		}
 
