@@ -113,10 +113,10 @@ func root(w http.ResponseWriter, r *http.Request) {
 			d.CurrentRate = 0 //Set equal to value in database relative to base and TargetCurrency
 			err := session.DB(tempstring).C("testcollection").Insert(d)
 			if err != nil {
-				fmt.Fprintln(w, "Error in Insert()")
+				fmt.Fprintln(w, "Error in Insert()", err.Error())
 			}
 			id := session.DB(tempstring).C("testcollection").Find(bson.M{"targetCurrency": d.TargetCurrency}).One(d)
-			fmt.Fprintln(w, "ID:", id) // Sends back an id + statuscode
+			fmt.Fprintln(w, id) // Sends back an id + statuscode
 		}
 
 		defer r.Body.Close()
