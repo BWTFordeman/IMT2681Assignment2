@@ -75,7 +75,7 @@ func root(w http.ResponseWriter, r *http.Request) {
 	tempstring := ("mongodb://" + USER + ":" + PASSWORD + "@ds241055.mlab.com:41055/imt2681")
 
 	session, err := mgo.Dial(tempstring)
-
+	fmt.Fprintln(w, tempstring)
 	if err != nil {
 		panic(err)
 	}
