@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"net/url"
 	"os"
 
 	"gopkg.in/mgo.v2"
@@ -41,7 +40,7 @@ type Fixer struct {
 
 //invokeWebhook sends messages through webhooks created in the system
 //Must take away lang when database is added, and search through database for names instead.
-func invokeWebhook(w http.ResponseWriter, lang [32]string) {
+/*func invokeWebhook(w http.ResponseWriter, lang [32]string) {
 	//May add validation for /slack or /github at end of webhookURL
 	//Discord has content, slack has text
 	webhookURL := "https://discordapp.com/api/webhooks/373975976834498560/S9vVxSvLRHpA3V8-F-EAKoB2IGlf0kpUvrJSeYtFI7dzCcCNnkebfiLd0yngTc2UtwF-"
@@ -56,7 +55,7 @@ func invokeWebhook(w http.ResponseWriter, lang [32]string) {
 	} else {
 		fmt.Fprintln(w, "Wrong status: ", res.StatusCode, http.StatusText(res.StatusCode))
 	}
-}
+}*/
 
 func main() {
 	http.HandleFunc("/", root)
