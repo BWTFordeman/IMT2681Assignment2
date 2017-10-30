@@ -120,7 +120,7 @@ func root(w http.ResponseWriter, r *http.Request) {
 
 		defer r.Body.Close()
 	} else { //If not post:
-		//http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
+		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
 	}
 
 	//Webhook:		//Needs to be in another handler
