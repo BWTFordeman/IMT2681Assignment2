@@ -8,6 +8,7 @@ import (
 	"os"
 
 	mgo "gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2/bson"
 )
 
 //Postload data retrieved from adding webhook
@@ -83,7 +84,7 @@ func root(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
 		decoder := json.NewDecoder(r.Body)
 		var p Postload
-		//var d Webhook
+		var d Webhook
 		err := decoder.Decode(&p)
 		if err != nil {
 			//fmt.Fprintln(w, "Error decoding webhhok post", err.Error())
@@ -105,7 +106,7 @@ func root(w http.ResponseWriter, r *http.Request) {
 		if err != nil || base != true || target != true {
 			http.Error(w, "Invalid post value", http.StatusBadRequest)
 		} else { //Create data in database:
-			/*d.BaseCurrency = p.BaseCurrency
+			d.BaseCurrency = p.BaseCurrency
 			d.MaxTriggerValue = p.MaxTriggerValue
 			d.MinTriggerValue = p.MinTriggerValue
 			d.TargetCurrency = p.TargetCurrency
@@ -113,10 +114,10 @@ func root(w http.ResponseWriter, r *http.Request) {
 			d.CurrentRate = 0 //Set equal to value in database relative to base and TargetCurrency
 			err := session.DB(tempstring).C("testcollection").Insert(d)
 			if err != nil {
-				//fmt.Fprintln(w, "Error in Insert()")
+				fmt.Fprintln(w, "Error in Insert()")
 			}
-			//id := session.DB(tempstring).C("testcollection").Find(bson.M{"targetCurrency": "NOK"})*/
-			fmt.Fprintln(w, "ID:" /*, id*/) // Sends back an id + statuscode
+			id := session.DB(tempstring).C("testcollection").Find(bson.M{"targetCurrency": "NOK"})
+			fmt.Fprintln(w, "ID:", id) // Sends back an id + statuscode
 		}
 
 		defer r.Body.Close()
