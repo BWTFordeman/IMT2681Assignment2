@@ -1,5 +1,5 @@
 {
-	"ImportPath": "assignment2",
+	"ImportPath": "assignment2/webhook",
 	"GoVersion": "go1.7",
 	"GodepVersion": "v79",
 	"Deps": []
