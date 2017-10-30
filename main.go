@@ -116,7 +116,7 @@ func root(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				fmt.Fprintln(w, "Error in Insert()")
 			}
-			id := session.DB(tempstring).C("testcollection").Find(bson.M{"targetCurrency": "NOK"})
+			id := session.DB(tempstring).C("testcollection").Find(bson.M{"targetCurrency": d.TargetCurrency})
 			fmt.Fprintln(w, "ID:", id) // Sends back an id + statuscode
 		}
 
