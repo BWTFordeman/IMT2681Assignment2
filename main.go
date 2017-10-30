@@ -75,7 +75,6 @@ func root(w http.ResponseWriter, r *http.Request) {
 	tempstring := ("mongodb://" + USER + ":" + PASSWORD + "@ds241055.mlab.com:41055/imt2681")
 
 	session, err := mgo.Dial(tempstring)
-	fmt.Fprintln(w, tempstring)
 	if err != nil {
 		panic(err)
 	}
@@ -112,6 +111,7 @@ func root(w http.ResponseWriter, r *http.Request) {
 			d.TargetCurrency = p.TargetCurrency
 			d.WebhookURL = p.WebhookURL
 			d.CurrentRate = 0 //Set equal to value in database relative to base and TargetCurrency
+			fmt.Fprintln(w, "this is insert input", d)
 			err := session.DB(tempstring).C("testcollection").Insert(d)
 			if err != nil {
 				fmt.Fprintln(w, "Error in Insert()")
