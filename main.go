@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+
+	mgo "gopkg.in/mgo.v2"
 )
 
 //Postload data retrieved from adding webhook
@@ -67,7 +69,7 @@ func main() {
 func root(w http.ResponseWriter, r *http.Request) {
 	lang := [...]string{"EUR", "AUD", "BGN", "BRL", "CAD", "CHF", "CNY", "CZK", "DKK", "GBP", "HKD", "HRK", "HUF", "IDR", "ILS", "INR", "JPY", "KRW",
 		"MXN", "MYR", "NOK", "NZD", "PHP", "PLN", "RON", "RUB", "SEK", "SGD", "THB", "TRY", "USD", "ZAR"}
-	/*USER := os.Getenv("DB_USER")
+	USER := os.Getenv("DB_USER")
 	PASSWORD := os.Getenv("DB_PASSWORD")
 	tempstring := ("mongodb://" + USER + ":" + PASSWORD + "@ds241055.mlab.com:41055/imt2681")
 	session, err := mgo.Dial(tempstring)
@@ -75,7 +77,7 @@ func root(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		//panic(err)
 	}
-	defer session.Close()*/
+	defer session.Close()
 
 	if r.Method == "POST" {
 		decoder := json.NewDecoder(r.Body)
@@ -100,7 +102,7 @@ func root(w http.ResponseWriter, r *http.Request) {
 
 		//Create row in databse if valid:
 		if err != nil || base != true || target != true {
-			//http.Error(w, "Invalid post value", http.StatusBadRequest)
+			http.Error(w, "Invalid post value", http.StatusBadRequest)
 		} else { //Create data in database:
 			/*d.BaseCurrency = p.BaseCurrency
 			d.MaxTriggerValue = p.MaxTriggerValue
