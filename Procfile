@@ -1,2 +1,2 @@
-web: webhookserver
+web: assignment2
 worker: fixerworker
