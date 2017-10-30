@@ -22,13 +22,12 @@ type Postload struct {
 
 //Webhook retrieves data from the webhook collection:
 type Webhook struct {
-	ID              bson.ObjectId `bson:"_id, omitempty"`
-	WebhookURL      string        `json:"webhookURL"`
-	BaseCurrency    string        `json:"baseCurrency"`
-	TargetCurrency  string        `json:"targetCurrency"`
-	MinTriggerValue float32       `json:"minTriggerValue"`
-	MaxTriggerValue float32       `json:"maxTriggerValue"`
-	CurrentRate     float32       `json:"currentRate"`
+	WebhookURL      string  `json:"webhookURL"`
+	BaseCurrency    string  `json:"baseCurrency"`
+	TargetCurrency  string  `json:"targetCurrency"`
+	MinTriggerValue float32 `json:"minTriggerValue"`
+	MaxTriggerValue float32 `json:"maxTriggerValue"`
+	CurrentRate     float32 `json:"currentRate"`
 }
 
 //Fixer retrieves latest data from fixer.io							api.fixer.io/latest?base=EUR;symbols=NOK
@@ -111,7 +110,7 @@ func root(w http.ResponseWriter, r *http.Request) {
 			d.MinTriggerValue = p.MinTriggerValue
 			d.TargetCurrency = p.TargetCurrency
 			d.WebhookURL = p.WebhookURL
-			d.CurrentRate = 42 //Set equal to value in database relative to base and TargetCurrency
+			d.CurrentRate = 0 //Set equal to value in database relative to base and TargetCurrency
 			err := session.DB(tempstring).C("testcollection").Insert(d)
 			if err != nil {
 				fmt.Fprintln(w, "Error in Insert()")
