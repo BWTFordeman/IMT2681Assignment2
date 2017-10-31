@@ -1,2 +1,2 @@
-web: web
+web: assignment2
 clock: clock
