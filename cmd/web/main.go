@@ -31,15 +31,6 @@ type Webhook struct {
 	CurrentRate     float32       `json:"currentRate"`
 }
 
-//Fixer retrieves latest data from fixer.io							api.fixer.io/latest?base=EUR;symbols=NOK
-type Fixer struct {
-	BaseCurrency string `json:"baseCurrency"`
-	Date         string `json:"date"`
-	Rates        struct {
-		string float32
-	} `json:"rates"`
-}
-
 //invokeWebhook sends messages through webhooks created in the system
 //Must take away lang when database is added, and search through database for names instead.
 func invokeWebhook(w http.ResponseWriter, lang [32]string) {
@@ -111,15 +102,15 @@ func root(w http.ResponseWriter, r *http.Request) {
 			d := Webhook{}
 			err = session.DB(DBNAME).C("testcollection").Find(bson.M{"webhookURL": p.WebhookURL, "targetCurrency": p.TargetCurrency}).One(&d)
 			if err == nil {
-				fmt.Fprintln(w, "Error - object already exists in database", http.StatusBadRequest)
+				http.Error(w, "Object already exists", http.StatusBadRequest)
 			} else {
-				err := session.DB(DBNAME).C("testcollection").Insert(bson.M{"webhookURL": p.WebhookURL, "baseCurrency": p.BaseCurrency, "targetCurrency": p.TargetCurrency, "maxTriggerValue": p.MaxTriggerValue, "minTriggerValue": p.MinTriggerValue, "currentRate": 0})
+				err := session.DB(DBNAME).C("webhooks").Insert(bson.M{"webhookURL": p.WebhookURL, "baseCurrency": p.BaseCurrency, "targetCurrency": p.TargetCurrency, "maxTriggerValue": p.MaxTriggerValue, "minTriggerValue": p.MinTriggerValue, "currentRate": 0})
 				if err != nil {
 					fmt.Fprintln(w, "Error in Insert()", err.Error())
 				}
 
 				d = Webhook{}
-				err = session.DB(DBNAME).C("testcollection").Find(bson.M{"webhookURL": p.WebhookURL, "targetCurrency": p.TargetCurrency}).One(&d)
+				err = session.DB(DBNAME).C("webhooks").Find(bson.M{"webhookURL": p.WebhookURL, "targetCurrency": p.TargetCurrency}).One(&d)
 				fmt.Fprintln(w, "Id of your webhook:", d.ID.Hex())
 			}
 		}

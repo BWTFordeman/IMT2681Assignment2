@@ -5,7 +5,7 @@
 	"Packages": ["./cmd/web", "./cmd/clock"],
 	"Deps": [
 		{	
-		"ImportPath": "assignment2/cmd/web"
+			"ImportPath": "assignment2/cmd/web"
 		},
 		{
 			"ImportPath": "assignment2/cmd/clock"
