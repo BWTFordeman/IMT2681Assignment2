@@ -22,13 +22,13 @@ type Postload struct {
 
 //Webhook retrieves data from the webhook collection:
 type Webhook struct {
-	ID              float32 `json:"_id"`
-	WebhookURL      string  `json:"webhookURL"`
-	BaseCurrency    string  `json:"baseCurrency"`
-	TargetCurrency  string  `json:"targetCurrency"`
-	MinTriggerValue float32 `json:"minTriggerValue"`
-	MaxTriggerValue float32 `json:"maxTriggerValue"`
-	CurrentRate     float32 `json:"currentRate"`
+	ID              bson.ObjectId `json:"_id"`
+	WebhookURL      string        `json:"webhookURL"`
+	BaseCurrency    string        `json:"baseCurrency"`
+	TargetCurrency  string        `json:"targetCurrency"`
+	MinTriggerValue float32       `json:"minTriggerValue"`
+	MaxTriggerValue float32       `json:"maxTriggerValue"`
+	CurrentRate     float32       `json:"currentRate"`
 }
 
 //Fixer retrieves latest data from fixer.io							api.fixer.io/latest?base=EUR;symbols=NOK
