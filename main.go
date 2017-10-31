@@ -118,7 +118,7 @@ func root(w http.ResponseWriter, r *http.Request) {
 			}
 			webhook := Webhook{}
 			err = session.DB("imt2681" /*DBNAME put the string in env. for heroku*/).C("testcollection").Find(bson.M{"targetCurrency": d.TargetCurrency}).One(&webhook)
-			fmt.Fprintln(w, err, "this is something:", webhook.BaseCurrency) // Sends back an id + statuscode
+			fmt.Fprintln(w, err, "", webhook.BaseCurrency) // Sends back an id + statuscode
 		}
 
 		defer r.Body.Close()
