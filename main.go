@@ -118,7 +118,7 @@ func root(w http.ResponseWriter, r *http.Request) {
 				fmt.Fprintln(w, "Error in Insert()", err.Error())
 			}
 			webhook := Webhook{}
-			err = session.DB("imt2681" /*DBNAME put the string in env. for heroku*/).C("testcollection").Find(bson.M{"targetCurrency": d.TargetCurrency}).One(&webhook)
+			err = session.DB("imt2681" /*DBNAME put the string in env. for heroku*/).C("testcollection").Find(bson.M{"targetCurrency": "NOK"}).One(&webhook)
 			fmt.Fprintln(w, "err:", err, "this is something:", webhook.BaseCurrency) // Sends back an id + statuscode
 		}
 
