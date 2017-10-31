@@ -114,7 +114,7 @@ func root(w http.ResponseWriter, r *http.Request) {
 
 			var d Webhook
 			err = session.DB(DBNAME).C("testcollection").Find(bson.M{"webhookURL": p.WebhookURL}).One(&d)
-			fmt.Fprintln(w, "err:", err, "(should print out id):", d.ID, "  ", d.TargetCurrency, "only d", d)
+			fmt.Fprintln(w, "err:", err, "(should print out id):", d.ID, "  ", d.TargetCurrency)
 		}
 
 		defer r.Body.Close()
