@@ -74,9 +74,7 @@ func root(w http.ResponseWriter, r *http.Request) {
 	PASSWORD := os.Getenv("DB_PASSWORD")
 	tempstring := ("mongodb://" + USER + ":" + PASSWORD + "@ds241055.mlab.com:41055/imt2681")
 
-	dialinfo, err := mgo.ParseURL(tempstring)
-
-	session, err := mgo.DialWithInfo(dialinfo)
+	session, err := mgo.Dial(tempstring)
 	if err != nil {
 		panic(err)
 	}
@@ -88,7 +86,7 @@ func root(w http.ResponseWriter, r *http.Request) {
 		var d Webhook
 		err := decoder.Decode(&p)
 		if err != nil {
-			//fmt.Fprintln(w, "Error decoding webhhok post", err.Error())
+			fmt.Fprintln(w, "Error decoding webhook post", err.Error())
 		}
 
 		//Check if currencies are of valid types.
@@ -113,7 +111,7 @@ func root(w http.ResponseWriter, r *http.Request) {
 			d.TargetCurrency = p.TargetCurrency
 			d.WebhookURL = p.WebhookURL
 			d.CurrentRate = 0 //Set equal to value in database relative to base and TargetCurrency
-			err := session.DB(tempstring).C("testcollection").Insert(d)
+			err := session.DB("imt2681").C("testcollection").Insert(d)
 			if err != nil {
 				fmt.Fprintln(w, "Error in Insert()", err.Error())
 			}
