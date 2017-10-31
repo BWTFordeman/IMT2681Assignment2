@@ -9,6 +9,7 @@ import (
 	"os"
 
 	mgo "gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2/bson"
 )
 
 //Postload data retrieved from adding webhook
@@ -116,8 +117,8 @@ func root(w http.ResponseWriter, r *http.Request) {
 				fmt.Fprintln(w, "Error in Insert()", err.Error())
 			}
 			webhook := Webhook{}
-			//id := session.DB(tempstring).C("testcollection").Find(bson.M{"targetCurrency": d.TargetCurrency}).One(&webhook)
-			//fmt.Fprintln(w, id) // Sends back an id + statuscode
+			id := session.DB(tempstring).C("testcollection").Find(bson.M{"targetCurrency": d.TargetCurrency}).One(&webhook)
+			fmt.Fprintln(w, id) // Sends back an id + statuscode
 		}
 
 		defer r.Body.Close()
