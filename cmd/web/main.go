@@ -106,15 +106,22 @@ func root(w http.ResponseWriter, r *http.Request) {
 		//Create object in database if valid:
 		if err != nil || base != true || target != true {
 			http.Error(w, "Invalid post value", http.StatusBadRequest)
-		} else { //Create data in database:
-			err := session.DB(DBNAME).C("testcollection").Insert(bson.M{"webhookURL": p.WebhookURL, "baseCurrency": p.BaseCurrency, "targetCurrency": p.TargetCurrency, "maxTriggerValue": p.MaxTriggerValue, "minTriggerValue": p.MinTriggerValue, "currentRate": 0})
-			if err != nil {
-				fmt.Fprintln(w, "Error in Insert()", err.Error())
-			}
-
+		} else {
+			//Create data in database if not there from before:
 			d := Webhook{}
 			err = session.DB(DBNAME).C("testcollection").Find(bson.M{"webhookURL": p.WebhookURL, "targetCurrency": p.TargetCurrency}).One(&d)
-			fmt.Fprintln(w, "Id of your webhook input:", d.ID.Hex())
+			if err != nil {
+				fmt.Fprintln(w, "Error - object already exists in database", http.StatusBadRequest)
+			} else {
+				err := session.DB(DBNAME).C("testcollection").Insert(bson.M{"webhookURL": p.WebhookURL, "baseCurrency": p.BaseCurrency, "targetCurrency": p.TargetCurrency, "maxTriggerValue": p.MaxTriggerValue, "minTriggerValue": p.MinTriggerValue, "currentRate": 0})
+				if err != nil {
+					fmt.Fprintln(w, "Error in Insert()", err.Error())
+				}
+
+				d = Webhook{}
+				err = session.DB(DBNAME).C("testcollection").Find(bson.M{"webhookURL": p.WebhookURL, "targetCurrency": p.TargetCurrency}).One(&d)
+				fmt.Fprintln(w, "Id of your webhook:", d.ID.Hex())
+			}
 		}
 
 		defer r.Body.Close()
