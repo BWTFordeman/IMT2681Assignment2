@@ -73,7 +73,7 @@ func root(w http.ResponseWriter, r *http.Request) {
 		"MXN", "MYR", "NOK", "NZD", "PHP", "PLN", "RON", "RUB", "SEK", "SGD", "THB", "TRY", "USD", "ZAR"}
 	USER := os.Getenv("DB_USER")
 	PASSWORD := os.Getenv("DB_PASSWORD")
-	//DBNAME := os.Getenv("DB_NAME")
+	DBNAME := os.Getenv("DB_NAME")
 	tempstring := ("mongodb://" + USER + ":" + PASSWORD + "@ds241055.mlab.com:41055/imt2681")
 
 	session, err := mgo.Dial(tempstring)
@@ -107,14 +107,14 @@ func root(w http.ResponseWriter, r *http.Request) {
 		if err != nil || base != true || target != true {
 			http.Error(w, "Invalid post value", http.StatusBadRequest)
 		} else { //Create data in database:
-			err := session.DB("imt2681").C("testcollection").Insert(bson.M{"webhookURL": p.WebhookURL, "baseCurrency": p.BaseCurrency, "targetCurrency": p.TargetCurrency, "maxTriggerValue": p.MaxTriggerValue, "minTriggerValue": p.MinTriggerValue, "currentRate": 0})
+			err := session.DB(DBNAME).C("testcollection").Insert(bson.M{"webhookURL": p.WebhookURL, "baseCurrency": p.BaseCurrency, "targetCurrency": p.TargetCurrency, "maxTriggerValue": p.MaxTriggerValue, "minTriggerValue": p.MinTriggerValue, "currentRate": 0})
 			if err != nil {
 				fmt.Fprintln(w, "Error in Insert()", err.Error())
 			}
 
 			var d Webhook
-			err = session.DB("imt2681").C("testcollection").Find(bson.M{"targetCurrency": p.TargetCurrency}).One(&d)
-			fmt.Fprintln(w, "err:", err, "(should print out id):", d.ID, "  ", d.TargetCurrency)
+			err = session.DB(DBNAME).C("testcollection").Find(bson.M{"webhookURL": p.WebhookURL}).One(&d)
+			fmt.Fprintln(w, "err:", err, "(should print out id):", d.ID, "  ", d.TargetCurrency, "only d", d)
 		}
 
 		defer r.Body.Close()
