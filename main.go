@@ -22,13 +22,13 @@ type Postload struct {
 
 //Webhook retrieves data from the webhook collection:
 type Webhook struct {
-	ID              bson.ObjectId `json:"_id"`
-	WebhookURL      string        `json:"webhookURL"`
-	BaseCurrency    string        `json:"baseCurrency"`
-	TargetCurrency  string        `json:"targetCurrency"`
-	MinTriggerValue float32       `json:"minTriggerValue"`
-	MaxTriggerValue float32       `json:"maxTriggerValue"`
-	CurrentRate     float32       `json:"currentRate"`
+	ID              float32 `json:"_id"`
+	WebhookURL      string  `json:"webhookURL"`
+	BaseCurrency    string  `json:"baseCurrency"`
+	TargetCurrency  string  `json:"targetCurrency"`
+	MinTriggerValue float32 `json:"minTriggerValue"`
+	MaxTriggerValue float32 `json:"maxTriggerValue"`
+	CurrentRate     float32 `json:"currentRate"`
 }
 
 //Fixer retrieves latest data from fixer.io							api.fixer.io/latest?base=EUR;symbols=NOK
@@ -85,7 +85,7 @@ func root(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
 		decoder := json.NewDecoder(r.Body)
 		var p Postload
-		var d Webhook
+
 		err := decoder.Decode(&p)
 		if err != nil {
 			fmt.Fprintln(w, "Error decoding webhook post", err.Error())
@@ -111,7 +111,8 @@ func root(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				fmt.Fprintln(w, "Error in Insert()", err.Error())
 			}
-			//webhook := Webhook{}
+
+			var d Webhook
 			err = session.DB("imt2681").C("testcollection").Find(bson.M{"targetCurrency": "NOK"}).One(&d)
 			fmt.Fprintln(w, "err:", err, "(should print out id):", d.ID, "  ", d.BaseCurrency)
 		}
