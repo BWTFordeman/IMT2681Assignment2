@@ -101,7 +101,7 @@ func root(w http.ResponseWriter, r *http.Request) {
 			//Create data in database if not there from before:
 			d := Webhook{}
 			err = session.DB(DBNAME).C("testcollection").Find(bson.M{"webhookURL": p.WebhookURL, "targetCurrency": p.TargetCurrency}).One(&d)
-			if err == nil {
+			if err != nil {
 				http.Error(w, "Object already exists", http.StatusBadRequest)
 			} else {
 				err := session.DB(DBNAME).C("webhooks").Insert(bson.M{"webhookURL": p.WebhookURL, "baseCurrency": p.BaseCurrency, "targetCurrency": p.TargetCurrency, "maxTriggerValue": p.MaxTriggerValue, "minTriggerValue": p.MinTriggerValue, "currentRate": 0})
