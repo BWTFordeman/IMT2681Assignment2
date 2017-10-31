@@ -113,7 +113,7 @@ func root(w http.ResponseWriter, r *http.Request) {
 			}
 
 			d := Webhook{}
-			err = session.DB(DBNAME).C("testcollection").Find(bson.M{"webhookURL": p.WebhookURL}).One(&d)
+			err = session.DB(DBNAME).C("testcollection").Find(bson.M{}).One(&d)
 			fmt.Fprintln(w, "err:", err, "(should print out id):", d.ID, "  ", d.TargetCurrency)
 		}
 
