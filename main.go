@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"net/url"
 	"os"
@@ -74,8 +73,10 @@ func root(w http.ResponseWriter, r *http.Request) {
 	USER := os.Getenv("DB_USER")
 	PASSWORD := os.Getenv("DB_PASSWORD")
 	tempstring := ("mongodb://" + USER + ":" + PASSWORD + "@ds241055.mlab.com:41055/imt2681")
-	log.Print(tempstring)
-	session, err := mgo.Dial(tempstring)
+
+	dialinfo, err := mgo.ParseURL(tempstring)
+
+	session, err := mgo.DialWithInfo(dialinfo)
 	if err != nil {
 		panic(err)
 	}
