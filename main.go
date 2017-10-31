@@ -107,19 +107,13 @@ func root(w http.ResponseWriter, r *http.Request) {
 		if err != nil || base != true || target != true {
 			http.Error(w, "Invalid post value", http.StatusBadRequest)
 		} else { //Create data in database:
-			d.BaseCurrency = p.BaseCurrency       //Put all this in bson.M{}  when inserting to database also add CurrentRate to this query
-			d.MaxTriggerValue = p.MaxTriggerValue //Then use d webhook to get all data with id (easier this way), shorter too
-			d.MinTriggerValue = p.MinTriggerValue
-			d.TargetCurrency = p.TargetCurrency
-			d.WebhookURL = p.WebhookURL
-			d.CurrentRate = 0 //Set equal to value in database relative to base and TargetCurrency
 			err := session.DB(DBNAME).C("testcollection").Insert(bson.M{"webhookURL": p.WebhookURL, "baseCurrency": p.BaseCurrency, "targetCurrency": p.TargetCurrency, "maxTriggerValue": p.MaxTriggerValue, "minTriggerValue": p.MinTriggerValue, "currentRate": 0})
 			if err != nil {
 				fmt.Fprintln(w, "Error in Insert()", err.Error())
 			}
-			webhook := Webhook{}
-			err = session.DB("imt2681" /*DBNAME put the string in env. for heroku*/).C("testcollection").Find(bson.M{"targetCurrency": "NOK"}).One(&webhook)
-			fmt.Fprintln(w, "err:", err, "this is something:", webhook.BaseCurrency) // Sends back an id + statuscode
+			//webhook := Webhook{}
+			err = session.DB("imt2681" /*DBNAME put the string in env. for heroku*/).C("testcollection").Find(bson.M{"targetCurrency": "NOK"}).One(&d)
+			fmt.Fprintln(w, "err:", err, "this is something:", d.ID) // Sends back an id + statuscode
 		}
 
 		defer r.Body.Close()
