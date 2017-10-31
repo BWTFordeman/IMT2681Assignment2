@@ -3,12 +3,12 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"net/url"
 	"os"
 
 	mgo "gopkg.in/mgo.v2"
-	"gopkg.in/mgo.v2/bson"
 )
 
 //Postload data retrieved from adding webhook
@@ -73,7 +73,7 @@ func root(w http.ResponseWriter, r *http.Request) {
 	USER := os.Getenv("DB_USER")
 	PASSWORD := os.Getenv("DB_PASSWORD")
 	tempstring := ("mongodb://" + USER + ":" + PASSWORD + "@ds241055.mlab.com:41055/imt2681")
-
+	log.Print(tempstring)
 	session, err := mgo.Dial(tempstring)
 	if err != nil {
 		panic(err)
@@ -115,8 +115,9 @@ func root(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				fmt.Fprintln(w, "Error in Insert()", err.Error())
 			}
-			id := session.DB(tempstring).C("testcollection").Find(bson.M{"targetCurrency": d.TargetCurrency}).One(d)
-			fmt.Fprintln(w, id) // Sends back an id + statuscode
+			webhook := Webhook{}
+			//id := session.DB(tempstring).C("testcollection").Find(bson.M{"targetCurrency": d.TargetCurrency}).One(&webhook)
+			//fmt.Fprintln(w, id) // Sends back an id + statuscode
 		}
 
 		defer r.Body.Close()
