@@ -22,7 +22,7 @@ type Postload struct {
 
 //Webhook retrieves data from the webhook collection:
 type Webhook struct {
-	ID              bson.ObjectId `json:"_id"`
+	ID              bson.ObjectId `json:"_id" bson:"_id"`
 	WebhookURL      string        `json:"webhookURL"`
 	BaseCurrency    string        `json:"baseCurrency"`
 	TargetCurrency  string        `json:"targetCurrency"`
@@ -113,7 +113,7 @@ func root(w http.ResponseWriter, r *http.Request) {
 			}
 
 			d := Webhook{}
-			err = session.DB(DBNAME).C("testcollection").Find(bson.M{}).One(&d)
+			err = session.DB(DBNAME).C("testcollection").Find(bson.M{"webhookURL": p.WebhookURL}).One(&d)
 			fmt.Fprintln(w, "err:", err, "(should print out id):", d.ID, "  ", d.TargetCurrency)
 		}
 
