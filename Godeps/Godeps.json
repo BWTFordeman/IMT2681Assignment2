@@ -2,6 +2,7 @@
 	"ImportPath": "assignment2",
 	"GoVersion": "go1.7",
 	"GodepVersion": "v79",
+	"Packages": ["./cmd/web", "./cmd/clock"],
 	"Deps": [
 		{
 			"ImportPath": "gopkg.in/mgo.v2",
