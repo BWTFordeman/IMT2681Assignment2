@@ -22,6 +22,7 @@ type Postload struct {
 
 //Webhook retrieves data from the webhook collection:
 type Webhook struct {
+	ID              bson.ObjectId
 	WebhookURL      string  `json:"webhookURL"`
 	BaseCurrency    string  `json:"baseCurrency"`
 	TargetCurrency  string  `json:"targetCurrency"`
@@ -112,7 +113,7 @@ func root(w http.ResponseWriter, r *http.Request) {
 			d.TargetCurrency = p.TargetCurrency
 			d.WebhookURL = p.WebhookURL
 			d.CurrentRate = 0 //Set equal to value in database relative to base and TargetCurrency
-			err := session.DB(DBNAME).C("testcollection").Insert(bson.M{"baseCurrency": p.BaseCurrency, "targetCurrency": p.TargetCurrency})
+			err := session.DB(DBNAME).C("testcollection").Insert(bson.M{"webhookURL": p.WebhookURL, "baseCurrency": p.BaseCurrency, "targetCurrency": p.TargetCurrency, "maxTriggerValue": p.MaxTriggerValue, "minTriggerValue": p.MinTriggerValue, "currentRate": 0})
 			if err != nil {
 				fmt.Fprintln(w, "Error in Insert()", err.Error())
 			}
