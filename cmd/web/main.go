@@ -104,14 +104,21 @@ func root(w http.ResponseWriter, r *http.Request) {
 			if err == nil {
 				http.Error(w, "Object already exists", http.StatusBadRequest)
 			} else {
-				err := session.DB(DBNAME).C("webhooks").Insert(bson.M{"webhookURL": p.WebhookURL, "baseCurrency": p.BaseCurrency, "targetCurrency": p.TargetCurrency, "maxTriggerValue": p.MaxTriggerValue, "minTriggerValue": p.MinTriggerValue, "currentRate": 0})
+				d = Webhook{} //Input correct values into database:
+				d.BaseCurrency = p.BaseCurrency
+				d.MaxTriggerValue = p.MaxTriggerValue
+				d.MinTriggerValue = p.MinTriggerValue
+				d.WebhookURL = p.WebhookURL
+				d.TargetCurrency = p.TargetCurrency
+				d.CurrentRate = 0 //Get correct value from fixerdata collection
+				err := session.DB(DBNAME).C("webhooks").Insert(d)
 				if err != nil {
 					fmt.Fprintln(w, "Error in Insert()", err.Error())
 				}
 
 				d = Webhook{}
 				err = session.DB(DBNAME).C("webhooks").Find(bson.M{"webhookURL": p.WebhookURL, "targetCurrency": p.TargetCurrency}).One(&d)
-				fmt.Fprintln(w, "Id of your webhook:", d.ID.Hex(), "webhookURL", d.WebhookURL)
+				fmt.Fprintln(w, "Id of your webhook:", d.ID.Hex())
 			}
 		}
 
