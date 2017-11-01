@@ -165,6 +165,7 @@ func root(w http.ResponseWriter, r *http.Request) {
 					fmt.Fprintln(w, "Could not get currentRate data")
 				}
 				id := bson.NewObjectId()
+				fmt.Fprintln(w, "current value", getCurrentValue(f, p.TargetCurrency))
 				err := session.DB(DBNAME).C("webhooks").Insert(bson.M{"_id": id, "webhookURL": p.WebhookURL, "baseCurrency": p.BaseCurrency, "targetCurrency": p.TargetCurrency, "maxTriggerValue": p.MaxTriggerValue, "minTriggerValue": p.MinTriggerValue, "currentRate": getCurrentValue(f, p.TargetCurrency)})
 				if err != nil {
 					fmt.Fprintln(w, "Error in Insert()", err.Error())
