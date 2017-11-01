@@ -62,7 +62,7 @@ func getWebhooks(w http.ResponseWriter, r *http.Request) {
 	d := Webhook{}
 	//err = session.DB(DBNAME).C("webhooks").Find(bson.M{"_id": "59fa374228754a0004356d5b"}).One(&d)
 	err = session.DB(DBNAME).C("webhooks").FindId(url2[1]).One(&d)
-	if err != nil {
+	if err == nil {
 		http.Error(w, "Object doesn't exist", http.StatusBadRequest)
 	} else {
 		fmt.Fprintln(w, "here it is:", d.ID, d.BaseCurrency)
