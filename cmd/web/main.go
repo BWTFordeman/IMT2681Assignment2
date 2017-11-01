@@ -23,7 +23,7 @@ type Postload struct {
 //Webhook retrieves data from the webhook collection:
 type Webhook struct {
 	ID              bson.ObjectId `json:"_id" bson:"_id"`
-	WebhookURL      string        `json:"webhookURL"`
+	WebhookURL      bson.Symbol   `json:"webhookURL"`
 	BaseCurrency    string        `json:"baseCurrency"`
 	TargetCurrency  string        `json:"targetCurrency"`
 	MinTriggerValue float32       `json:"minTriggerValue"`
