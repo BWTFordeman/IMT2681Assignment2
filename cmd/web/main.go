@@ -21,16 +21,7 @@ type Postload struct {
 }
 
 //Webhook retrieves data from the webhook collection:
-type WebhookPost struct {
-	WebhookURL      string  `json:"webhookURL"`
-	BaseCurrency    string  `json:"baseCurrency"`
-	TargetCurrency  string  `json:"targetCurrency"`
-	MinTriggerValue float32 `json:"minTriggerValue"`
-	MaxTriggerValue float32 `json:"maxTriggerValue"`
-	CurrentRate     float32 `json:"currentRate"`
-}
-
-type WebhookGet struct {
+type Webhook struct {
 	ID              bson.ObjectId `json:"_id" bson:"_id"`
 	WebhookURL      string        `json:"webhookURL"`
 	BaseCurrency    string        `json:"baseCurrency"`
@@ -108,27 +99,19 @@ func root(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Invalid post value", http.StatusBadRequest)
 		} else {
 			//Create data in database if not there from before:
-			d1 := WebhookGet{}
-			err = session.DB(DBNAME).C("webhooks").Find(bson.M{"webhookURL": p.WebhookURL, "targetCurrency": p.TargetCurrency}).One(&d1)
+			d := Webhook{}
+			err = session.DB(DBNAME).C("webhooks").Find(bson.M{"webhookURL": p.WebhookURL, "targetCurrency": p.TargetCurrency}).One(&d)
 			if err == nil {
 				http.Error(w, "Object already exists", http.StatusBadRequest)
 			} else {
-				d2 := WebhookPost{}
-				//d.ID = bson.NewObjectId()
-				d2.BaseCurrency = p.BaseCurrency
-				d2.MaxTriggerValue = p.MaxTriggerValue
-				d2.MinTriggerValue = p.MinTriggerValue
-				d2.WebhookURL = p.WebhookURL
-				d2.TargetCurrency = p.TargetCurrency
-				d2.CurrentRate = 0 //Get correct value from fixerdata collection
-				err := session.DB(DBNAME).C("webhooks").Insert(d2)
+				err := session.DB(DBNAME).C("webhooks").Insert(bson.M{"webhookURL": p.WebhookURL, "baseCurrency": p.BaseCurrency, "targetCurrency": p.TargetCurrency, "maxTriggerValue": p.MaxTriggerValue, "minTriggerValue": p.MinTriggerValue, "currentRate": 0})
 				if err != nil {
 					fmt.Fprintln(w, "Error in Insert()", err.Error())
 				}
 
-				d3 := WebhookGet{}
-				err = session.DB(DBNAME).C("webhooks").Find(bson.M{"webhookURL": p.WebhookURL, "targetCurrency": p.TargetCurrency}).One(&d3)
-				fmt.Fprintln(w, "Id of your webhook:", d3.ID.Hex())
+				d = Webhook{}
+				err = session.DB(DBNAME).C("webhooks").Find(bson.M{"webhookURL": p.WebhookURL, "targetCurrency": p.TargetCurrency}).One(&d)
+				fmt.Fprintln(w, "Id of your webhook:", d.ID.Hex())
 			}
 		}
 
