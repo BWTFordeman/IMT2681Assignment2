@@ -498,7 +498,6 @@ func invokeWebhook(webhookURL string, targetCurrency string, currentRate float32
 	} else {
 		fmt.Println("A webhook message is sent")
 	}
-
 	if res.StatusCode == 200 || res.StatusCode == 204 {
 		fmt.Println("statuscode: ", res.StatusCode)
 	} else {
