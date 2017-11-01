@@ -31,6 +31,24 @@ type Webhook struct {
 	CurrentRate     float32       `json:"currentRate" bson:"currentRate"`
 }
 
+func main() {
+	r := mux.NewRouter()
+	r.HandleFunc("/{id}", getWebhooks)
+	r.HandleFunc("/", root)
+	//http.HandleFunc("/", root)
+	//http.HandleFunc("/{id}", getWebhooks)
+	fmt.Println("listening...")
+	err := http.ListenAndServe(":"+os.Getenv("PORT"), nil)
+	if err != nil {
+		fmt.Println(err.Error(), "Panic or something")
+	}
+}
+
+func getWebhooks(w http.ResponseWriter, r *http.Request) {
+	url := r.URL.Path
+	fmt.Fprintln(w, "Shitboy ", url)
+}
+
 /*
 url := r.URL.Path
 repo2 := strings.Split(repo1, "/")
@@ -44,24 +62,6 @@ for i < 30 {
 }
 return ""
 */
-
-func main() {
-	r := mux.NewRouter()
-	r.HandleFunc("/{id}", getWebhooks)
-
-	http.HandleFunc("/", root)
-	//http.HandleFunc("/{id}", getWebhooks)
-	fmt.Println("listening...")
-	err := http.ListenAndServe(":"+os.Getenv("PORT"), nil)
-	if err != nil {
-		fmt.Println(err.Error(), "Panic or something")
-	}
-}
-
-func getWebhooks(w http.ResponseWriter, r *http.Request) {
-	url := r.URL.Path
-	fmt.Fprintln(w, "Shitboy ", url)
-}
 
 func root(w http.ResponseWriter, r *http.Request) {
 	lang := [...]string{"EUR", "AUD", "BGN", "BRL", "CAD", "CHF", "CNY", "CZK", "DKK", "GBP", "HKD", "HRK", "HUF", "IDR", "ILS", "INR", "JPY", "KRW",
@@ -124,16 +124,4 @@ func root(w http.ResponseWriter, r *http.Request) {
 	} else { //If not post:
 		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
 	}
-
-	//Webhook:		//Needs to be in another handler
-
 }
-
-/*//GET AND DELETE WILL BE IN ANOTHER HANDLER
-switch r.Method {
-
-case "GET": //Show stuff from database
-	fmt.Fprintln(w, "GET")
-
-case "DELETE": //Delete something from the database
-}*/
