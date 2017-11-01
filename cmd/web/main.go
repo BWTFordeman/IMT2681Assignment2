@@ -105,6 +105,8 @@ func deleteWebhooks(w http.ResponseWriter, r *http.Request) {
 
 	err = session.DB(DBNAME).C("webhooks").Remove(bson.M{"_id": bson.ObjectIdHex(url2[1])})
 	if err != nil {
+		http.Error(w, "Could not find any object with that id", http.StatusBadRequest)
+	} else {
 		http.Error(w, "Deleted object", http.StatusAccepted)
 	}
 }
