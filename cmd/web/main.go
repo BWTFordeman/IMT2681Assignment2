@@ -65,7 +65,7 @@ func getWebhooks(w http.ResponseWriter, r *http.Request) {
 	if err == nil {
 		http.Error(w, "Object doesn't exist", http.StatusBadRequest)
 	} else {
-		fmt.Fprintln(w, d)
+		fmt.Fprintln(w, "here it is:", d)
 	}
 }
 
