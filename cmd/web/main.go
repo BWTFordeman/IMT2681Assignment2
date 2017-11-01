@@ -24,11 +24,11 @@ type Postload struct {
 type Webhook struct {
 	ID              bson.ObjectId `json:"_id" bson:"_id"`
 	WebhookURL      string        `json:"webhookURL" bson:"webhookURL"`
-	BaseCurrency    string        `json:"baseCurrency"`
-	TargetCurrency  string        `json:"targetCurrency"`
-	MinTriggerValue float32       `json:"minTriggerValue"`
-	MaxTriggerValue float32       `json:"maxTriggerValue"`
-	CurrentRate     float32       `json:"currentRate"`
+	BaseCurrency    string        `json:"baseCurrency" bson:"baseCurrency"`
+	TargetCurrency  string        `json:"targetCurrency" bson:"targetCurrency"`
+	MinTriggerValue float32       `json:"minTriggerValue" bson:"minTriggerValue"`
+	MaxTriggerValue float32       `json:"maxTriggerValue" bson:"maxTriggerValue"`
+	CurrentRate     float32       `json:"currentRate" bson:"currentRate"`
 }
 
 //invokeWebhook sends messages through webhooks created in the system
