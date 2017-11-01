@@ -35,6 +35,7 @@ func main() {
 	r := mux.NewRouter()
 	r.HandleFunc("/{id}", getWebhooks)
 	r.HandleFunc("/", root)
+	http.Handle("/", r)
 	//http.HandleFunc("/", root)
 	//http.HandleFunc("/{id}", getWebhooks)
 	fmt.Println("listening...")
