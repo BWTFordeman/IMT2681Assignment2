@@ -55,7 +55,8 @@ func main() {
 }
 
 func getWebhooks(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "Shitboy")
+	url := r.URL.Path
+	fmt.Fprintln(w, "Shitboy ", url)
 }
 
 func root(w http.ResponseWriter, r *http.Request) {
