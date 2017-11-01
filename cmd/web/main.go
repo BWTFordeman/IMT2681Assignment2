@@ -34,7 +34,7 @@ type Webhook struct {
 
 func main() {
 	r := mux.NewRouter()
-	r.HandleFunc("/{id}", getWebhooks)
+	r.HandleFunc("/{id}", getWebhooks).Methods("GET")
 	r.HandleFunc("/", root)
 	http.Handle("/", r)
 	fmt.Println("listening...")
