@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/gorilla/mux"
 	mgo "gopkg.in/mgo.v2"
@@ -36,8 +37,6 @@ func main() {
 	r.HandleFunc("/{id}", getWebhooks)
 	r.HandleFunc("/", root)
 	http.Handle("/", r)
-	//http.HandleFunc("/", root)
-	//http.HandleFunc("/{id}", getWebhooks)
 	fmt.Println("listening...")
 	err := http.ListenAndServe(":"+os.Getenv("PORT"), nil)
 	if err != nil {
@@ -47,7 +46,8 @@ func main() {
 
 func getWebhooks(w http.ResponseWriter, r *http.Request) {
 	url := r.URL.Path
-	fmt.Fprintln(w, "Shitboy ", url)
+	url2 := strings.Split(url, "/")
+	fmt.Fprintln(w, url2[1])
 }
 
 /*
