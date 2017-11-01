@@ -23,12 +23,12 @@ type Postload struct {
 //Webhook retrieves data from the webhook collection:
 type Webhook struct {
 	ID              bson.ObjectId `json:"_id" bson:"_id"`
-	WebhookURL      string        `json:"webhookurl"`
-	BaseCurrency    string        `json:"basecurrency"`
-	TargetCurrency  string        `json:"targetcurrency"`
-	MinTriggerValue float32       `json:"mintriggervalue"`
-	MaxTriggerValue float32       `json:"maxtriggervalue"`
-	CurrentRate     float32       `json:"currentrate"`
+	WebhookURL      string        `json:"webhookURL"`
+	BaseCurrency    string        `json:"baseCurrency"`
+	TargetCurrency  string        `json:"targetCurrency"`
+	MinTriggerValue float32       `json:"minTriggerValue"`
+	MaxTriggerValue float32       `json:"maxTriggerValue"`
+	CurrentRate     float32       `json:"currentRate"`
 }
 
 //invokeWebhook sends messages through webhooks created in the system
@@ -116,7 +116,7 @@ func root(w http.ResponseWriter, r *http.Request) {
 				if err != nil {
 					fmt.Fprintln(w, "Error in Insert()", err.Error())
 				}
-				fmt.Fprintln(w, "id generated before:", d.ID)
+
 				d = Webhook{}
 				err = session.DB(DBNAME).C("webhooks").Find(bson.M{"webhookURL": p.WebhookURL, "targetCurrency": p.TargetCurrency}).One(&d)
 				fmt.Fprintln(w, "Id of your webhook:", d.ID.Hex())
