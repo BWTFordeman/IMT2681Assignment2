@@ -105,6 +105,7 @@ func root(w http.ResponseWriter, r *http.Request) {
 				http.Error(w, "Object already exists", http.StatusBadRequest)
 			} else {
 				d = Webhook{} //Input correct values into database:
+				d.ID = bson.NewObjectId()
 				d.BaseCurrency = p.BaseCurrency
 				d.MaxTriggerValue = p.MaxTriggerValue
 				d.MinTriggerValue = p.MinTriggerValue
