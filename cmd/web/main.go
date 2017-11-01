@@ -35,7 +35,7 @@ type Webhook struct {
 func main() {
 	r := mux.NewRouter()
 	r.HandleFunc("/{id}", getWebhooks).Methods("GET")
-	r.HandleFunc("/", root)
+	r.HandleFunc("/{id}", deleteWebhooks).Methods("DELETE")
 	http.Handle("/", r)
 	fmt.Println("listening...")
 	err := http.ListenAndServe(":"+os.Getenv("PORT"), nil)
@@ -44,9 +44,14 @@ func main() {
 	}
 }
 
+func deleteWebhooks(w http.ResponseWriter, r *http.Request) {
+
+}
+
 func getWebhooks(w http.ResponseWriter, r *http.Request) {
 	url := r.URL.Path
 	url2 := strings.Split(url, "/")
+	//Check that url2[1] = 24 values long for id
 
 	USER := os.Getenv("DB_USER")
 	PASSWORD := os.Getenv("DB_PASSWORD")
@@ -64,23 +69,9 @@ func getWebhooks(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, "Object doesn't exist", http.StatusBadRequest)
 	} else {
-		fmt.Fprintln(w, "here it is:", d.ID, d.BaseCurrency)
+		fmt.Fprintln(w, d)
 	}
 }
-
-/*
-url := r.URL.Path
-repo2 := strings.Split(repo1, "/")
-//	url := string(repo2[4] + "/" + repo2[5])
-i := 0
-for i < 30 {
-	i++
-	if repo2[i] == "github.com" {
-		return string(repo2[i+1] + "/" + repo2[i+2])
-	}
-}
-return ""
-*/
 
 func root(w http.ResponseWriter, r *http.Request) {
 	lang := [...]string{"EUR", "AUD", "BGN", "BRL", "CAD", "CHF", "CNY", "CZK", "DKK", "GBP", "HKD", "HRK", "HUF", "IDR", "ILS", "INR", "JPY", "KRW",
