@@ -59,15 +59,28 @@ func getWebhooks(w http.ResponseWriter, r *http.Request) {
 	}
 	defer session.Close()
 
-	fmt.Fprintln(w, "This is id:", url2[1])
 	d := Webhook{}
-	err = session.DB(DBNAME).C("webhooks").FindId(url2[1]).One(&d)
+	err = session.DB(DBNAME).C("webhooks").Find(bson.M{"_id": bson.ObjectIdHex(url2[1])}).One(&d)
 	if err != nil {
 		http.Error(w, "Object doesn't exist", http.StatusBadRequest)
 	} else {
 		fmt.Fprintln(w, "here it is:", d.ID, d.BaseCurrency)
 	}
 }
+
+/*
+url := r.URL.Path
+repo2 := strings.Split(repo1, "/")
+//	url := string(repo2[4] + "/" + repo2[5])
+i := 0
+for i < 30 {
+	i++
+	if repo2[i] == "github.com" {
+		return string(repo2[i+1] + "/" + repo2[i+2])
+	}
+}
+return ""
+*/
 
 func root(w http.ResponseWriter, r *http.Request) {
 	lang := [...]string{"EUR", "AUD", "BGN", "BRL", "CAD", "CHF", "CNY", "CZK", "DKK", "GBP", "HKD", "HRK", "HUF", "IDR", "ILS", "INR", "JPY", "KRW",
