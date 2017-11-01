@@ -77,6 +77,7 @@ type Fixer struct {
 
 func main() {
 	r := mux.NewRouter()
+	r.HandleFunc("/", root)
 	r.HandleFunc("/{id}", getWebhooks).Methods("GET")
 	r.HandleFunc("/{id}", deleteWebhooks).Methods("DELETE")
 	http.Handle("/", r)
