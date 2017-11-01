@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/gorilla/mux"
 	mgo "gopkg.in/mgo.v2"
@@ -44,8 +45,8 @@ func main() {
 }
 
 func getWebhooks(w http.ResponseWriter, r *http.Request) {
-	//url := r.URL.Path
-	//url2 := strings.Split(url, "/")
+	url := r.URL.Path
+	url2 := strings.Split(url, "/")
 
 	USER := os.Getenv("DB_USER")
 	PASSWORD := os.Getenv("DB_PASSWORD")
@@ -59,7 +60,8 @@ func getWebhooks(w http.ResponseWriter, r *http.Request) {
 	defer session.Close()
 
 	d := Webhook{}
-	err = session.DB(DBNAME).C("webhooks").Find(bson.M{"_id": "59fa374228754a0004356d5b"}).One(&d)
+	//err = session.DB(DBNAME).C("webhooks").Find(bson.M{"_id": "59fa374228754a0004356d5b"}).One(&d)
+	err = session.DB(DBNAME).C("webhooks").FindId(url2[1]).One(&d)
 	if err != nil {
 		http.Error(w, "Object doesn't exist", http.StatusBadRequest)
 	} else {
