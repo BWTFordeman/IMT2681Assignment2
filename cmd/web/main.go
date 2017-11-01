@@ -33,7 +33,10 @@ type Webhook struct {
 	CurrentRate     float32       `json:"currentRate" bson:"currentRate"`
 }
 
-//Fixer retrieves data from fixer collection:
+/*Fixer retrieves data from fixer collection:				//Rates map[string]float64 `json:"rates"`
+Use for i := range rates {
+
+}*/
 type Fixer struct {
 	BaseCurrency string `json:"base"`
 	Date         string `json:"date"`
@@ -85,7 +88,25 @@ func main() {
 }
 
 func deleteWebhooks(w http.ResponseWriter, r *http.Request) {
+	url := r.URL.Path
+	url2 := strings.Split(url, "/")
+	//Check that url2[1] = 24 values long for id
 
+	USER := os.Getenv("DB_USER")
+	PASSWORD := os.Getenv("DB_PASSWORD")
+	DBNAME := os.Getenv("DB_NAME")
+	tempstring := ("mongodb://" + USER + ":" + PASSWORD + "@ds241055.mlab.com:41055/imt2681")
+
+	session, err := mgo.Dial(tempstring)
+	if err != nil {
+		panic(err)
+	}
+	defer session.Close()
+
+	err = session.DB(DBNAME).C("webhooks").Remove(bson.M{"_id": bson.ObjectIdHex(url2[1])})
+	if err != nil {
+		http.Error(w, "Deleted object", http.StatusAccepted)
+	}
 }
 
 func getWebhooks(w http.ResponseWriter, r *http.Request) {
