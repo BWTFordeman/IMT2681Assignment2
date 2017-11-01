@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/gorilla/mux"
 	mgo "gopkg.in/mgo.v2"
@@ -30,6 +31,45 @@ type Webhook struct {
 	MinTriggerValue float32       `json:"minTriggerValue" bson:"minTriggerValue"`
 	MaxTriggerValue float32       `json:"maxTriggerValue" bson:"maxTriggerValue"`
 	CurrentRate     float32       `json:"currentRate" bson:"currentRate"`
+}
+
+//Fixer retrieves data from fixer collection:
+type Fixer struct {
+	BaseCurrency string `json:"base"`
+	Date         string `json:"date"`
+	Rates        struct {
+		AUD float32 `json:"AUD"`
+		BGN float32 `json:"BGN"`
+		BRL float32 `json:"BRL"`
+		CAD float32 `json:"CAD"`
+		CHF float32 `json:"CHF"`
+		CNY float32 `json:"CNY"`
+		CZK float32 `json:"CZK"`
+		DKK float32 `json:"DKK"`
+		GBP float32 `json:"GBP"`
+		HRK float32 `json:"HRK"`
+		HKD float32 `json:"HKD"`
+		HUF float32 `json:"HUF"`
+		IDR float32 `json:"IDR"`
+		ILS float32 `json:"ILS"`
+		INR float32 `json:"INR"`
+		JPY float32 `json:"JPY"`
+		KRW float32 `json:"KRW"`
+		MXN float32 `json:"MXN"`
+		MYR float32 `json:"MYR"`
+		NOK float32 `json:"NOK"`
+		NZD float32 `json:"NZD"`
+		PHP float32 `json:"PHP"`
+		PLN float32 `json:"PLN"`
+		RON float32 `json:"RON"`
+		RUB float32 `json:"RUB"`
+		SEK float32 `json:"SEK"`
+		SGD float32 `json:"SGD"`
+		THB float32 `json:"THB"`
+		TRY float32 `json:"TRY"`
+		USD float32 `json:"USD"`
+		ZAR float32 `json:"ZAR"`
+	} `json:"rates"`
 }
 
 func main() {
@@ -117,9 +157,15 @@ func root(w http.ResponseWriter, r *http.Request) {
 			err = session.DB(DBNAME).C("webhooks").Find(bson.M{"webhookURL": p.WebhookURL, "targetCurrency": p.TargetCurrency}).One(&d)
 			if err == nil {
 				http.Error(w, "Object already exists", http.StatusBadRequest)
-			} else {
-				id := bson.NewObjectId() //Get currentRate from fixerdata collection and put that in currentRate instead of 0
-				err := session.DB(DBNAME).C("webhooks").Insert(bson.M{"_id": id, "webhookURL": p.WebhookURL, "baseCurrency": p.BaseCurrency, "targetCurrency": p.TargetCurrency, "maxTriggerValue": p.MaxTriggerValue, "minTriggerValue": p.MinTriggerValue, "currentRate": 0})
+			} else { //Get currentRate from fixerdata collection and put that in currentRate.
+				f := Fixer{}
+				k := time.Now()
+				err = session.DB(DBNAME).C("fixerdata").Find(bson.M{"date": k.String()}).One(&f)
+				if err != nil {
+					fmt.Fprintln(w, "Could not get currentRate data")
+				}
+				id := bson.NewObjectId()
+				err := session.DB(DBNAME).C("webhooks").Insert(bson.M{"_id": id, "webhookURL": p.WebhookURL, "baseCurrency": p.BaseCurrency, "targetCurrency": p.TargetCurrency, "maxTriggerValue": p.MaxTriggerValue, "minTriggerValue": p.MinTriggerValue, "currentRate": getCurrentValue(f, p.TargetCurrency)})
 				if err != nil {
 					fmt.Fprintln(w, "Error in Insert()", err.Error())
 				}
@@ -134,4 +180,72 @@ func root(w http.ResponseWriter, r *http.Request) {
 	} else { //If not post:
 		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
 	}
+}
+
+//THIS NEEDS TO BE FIXED AS FAST AS POSSIBLE!! NOT GOOD!
+func getCurrentValue(f Fixer, targetCurrency string) float32 {
+	if targetCurrency == "AUD" {
+		return f.Rates.AUD
+	} else if targetCurrency == "BGN" {
+		return f.Rates.BGN
+	} else if targetCurrency == "BRL" {
+		return f.Rates.BRL
+	} else if targetCurrency == "CAD" {
+		return f.Rates.CAD
+	} else if targetCurrency == "CHF" {
+		return f.Rates.CHF
+	} else if targetCurrency == "CNY" {
+		return f.Rates.CNY
+	} else if targetCurrency == "CZK" {
+		return f.Rates.CZK
+	} else if targetCurrency == "DKK" {
+		return f.Rates.DKK
+	} else if targetCurrency == "GBP" {
+		return f.Rates.GBP
+	} else if targetCurrency == "HKD" {
+		return f.Rates.HKD
+	} else if targetCurrency == "HRK" {
+		return f.Rates.HRK
+	} else if targetCurrency == "HUF" {
+		return f.Rates.HUF
+	} else if targetCurrency == "IDR" {
+		return f.Rates.IDR
+	} else if targetCurrency == "ILS" {
+		return f.Rates.ILS
+	} else if targetCurrency == "INR" {
+		return f.Rates.INR
+	} else if targetCurrency == "JPY" {
+		return f.Rates.JPY
+	} else if targetCurrency == "KRW" {
+		return f.Rates.KRW
+	} else if targetCurrency == "MXN" {
+		return f.Rates.MXN
+	} else if targetCurrency == "MYR" {
+		return f.Rates.MYR
+	} else if targetCurrency == "NOK" {
+		return f.Rates.NOK
+	} else if targetCurrency == "NZD" {
+		return f.Rates.NZD
+	} else if targetCurrency == "PHP" {
+		return f.Rates.PHP
+	} else if targetCurrency == "PLN" {
+		return f.Rates.PLN
+	} else if targetCurrency == "RON" {
+		return f.Rates.RON
+	} else if targetCurrency == "RUB" {
+		return f.Rates.RUB
+	} else if targetCurrency == "SEK" {
+		return f.Rates.SEK
+	} else if targetCurrency == "SGD" {
+		return f.Rates.SGD
+	} else if targetCurrency == "THB" {
+		return f.Rates.THB
+	} else if targetCurrency == "TRY" {
+		return f.Rates.TRY
+	} else if targetCurrency == "USD" {
+		return f.Rates.USD
+	} else if targetCurrency == "ZAR" {
+		return f.Rates.ZAR
+	}
+	return 0
 }
