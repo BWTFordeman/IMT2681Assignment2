@@ -48,6 +48,25 @@ func getWebhooks(w http.ResponseWriter, r *http.Request) {
 	url := r.URL.Path
 	url2 := strings.Split(url, "/")
 	fmt.Fprintln(w, url2[1])
+
+	USER := os.Getenv("DB_USER")
+	PASSWORD := os.Getenv("DB_PASSWORD")
+	DBNAME := os.Getenv("DB_NAME")
+	tempstring := ("mongodb://" + USER + ":" + PASSWORD + "@ds241055.mlab.com:41055/imt2681")
+
+	session, err := mgo.Dial(tempstring)
+	if err != nil {
+		panic(err)
+	}
+	defer session.Close()
+
+	d := Webhook{}
+	err = session.DB(DBNAME).C("webhooks").Find(bson.M{"_id": url2[1]}).One(&d)
+	if err == nil {
+		http.Error(w, "Object doesn't exist", http.StatusBadRequest)
+	} else {
+		fmt.Fprintln(w, d)
+	}
 }
 
 /*
