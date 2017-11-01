@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/gorilla/mux"
 	mgo "gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -45,8 +46,11 @@ return ""
 */
 
 func main() {
+	r := mux.NewRouter()
+	r.HandleFunc("/{id}", getWebhooks)
+
 	http.HandleFunc("/", root)
-	http.HandleFunc("/{id}", getWebhooks)
+	//http.HandleFunc("/{id}", getWebhooks)
 	fmt.Println("listening...")
 	err := http.ListenAndServe(":"+os.Getenv("PORT"), nil)
 	if err != nil {
