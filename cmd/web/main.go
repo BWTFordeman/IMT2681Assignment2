@@ -69,7 +69,7 @@ func getWebhooks(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, "Object doesn't exist", http.StatusBadRequest)
 	} else {
-		fmt.Fprintln(w, d)
+		fmt.Fprintln(w, "{\n\tbaseCurrency", d.BaseCurrency, "\n\ttargetCurrency:", d.TargetCurrency, "\n\tcurrentRate:", d.CurrentRate, "\n\tminTriggerValue:", d.MinTriggerValue, "\n\tmaxTriggerValue:", d.MaxTriggerValue, "\n}")
 	}
 }
 
