@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"net/url"
 	"os"
 
 	mgo "gopkg.in/mgo.v2"
@@ -31,32 +30,32 @@ type Webhook struct {
 	CurrentRate     float32       `json:"currentRate" bson:"currentRate"`
 }
 
-//invokeWebhook sends messages through webhooks created in the system
-//Must take away lang when database is added, and search through database for names instead.
-func invokeWebhook(w http.ResponseWriter, lang [32]string) {
-	//May add validation for /slack or /github at end of webhookURL
-	//Discord has content, slack has text
-	webhookURL := "https://discordapp.com/api/webhooks/373975976834498560/S9vVxSvLRHpA3V8-F-EAKoB2IGlf0kpUvrJSeYtFI7dzCcCNnkebfiLd0yngTc2UtwF-"
-
-	res, err := http.PostForm(webhookURL, url.Values{"content": {"baseCurrency: " + lang[0]}, "username": {"CurrencyChecker"}})
-	if err != nil {
-		fmt.Println(err.Error(), "Panic or something")
-	}
-
-	if res.StatusCode == 200 || res.StatusCode == 204 {
-		fmt.Fprintln(w, "statuscode: ", res.StatusCode)
-	} else {
-		fmt.Fprintln(w, "Wrong status: ", res.StatusCode, http.StatusText(res.StatusCode))
+/*
+url := r.URL.Path
+repo2 := strings.Split(repo1, "/")
+//	url := string(repo2[4] + "/" + repo2[5])
+i := 0
+for i < 30 {
+	i++
+	if repo2[i] == "github.com" {
+		return string(repo2[i+1] + "/" + repo2[i+2])
 	}
 }
+return ""
+*/
 
 func main() {
 	http.HandleFunc("/", root)
+	http.HandleFunc("/{id}", getWebhooks)
 	fmt.Println("listening...")
 	err := http.ListenAndServe(":"+os.Getenv("PORT"), nil)
 	if err != nil {
 		fmt.Println(err.Error(), "Panic or something")
 	}
+}
+
+func getWebhooks(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintln(w, "Shitboy")
 }
 
 func root(w http.ResponseWriter, r *http.Request) {
@@ -104,7 +103,7 @@ func root(w http.ResponseWriter, r *http.Request) {
 			if err == nil {
 				http.Error(w, "Object already exists", http.StatusBadRequest)
 			} else {
-				id := bson.NewObjectId()
+				id := bson.NewObjectId() //Get currentRate from fixerdata collection and put that in currentRate instead of 0
 				err := session.DB(DBNAME).C("webhooks").Insert(bson.M{"_id": id, "webhookURL": p.WebhookURL, "baseCurrency": p.BaseCurrency, "targetCurrency": p.TargetCurrency, "maxTriggerValue": p.MaxTriggerValue, "minTriggerValue": p.MinTriggerValue, "currentRate": 0})
 				if err != nil {
 					fmt.Fprintln(w, "Error in Insert()", err.Error())
@@ -122,7 +121,6 @@ func root(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//Webhook:		//Needs to be in another handler
-	//invokeWebhook(w, lang)
 
 }
 
