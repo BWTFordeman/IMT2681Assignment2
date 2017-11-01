@@ -107,6 +107,8 @@ func deleteWebhooks(w http.ResponseWriter, r *http.Request) {
 	err = session.DB(DBNAME).C("webhooks").Remove(bson.M{"_id": bson.ObjectIdHex(url2[1])})
 	if err != nil {
 		http.Error(w, "Could not find any object with that id", http.StatusBadRequest)
+	} else {
+		http.Error(w, "Deleted object", http.StatusAccepted)
 	}
 }
 
@@ -187,7 +189,7 @@ func root(w http.ResponseWriter, r *http.Request) {
 					fmt.Fprintln(w, "Could not get currentRate data")
 				}
 				id := bson.NewObjectId()
-				fmt.Fprintln(w, "current value", getCurrentValue(f, p.TargetCurrency))
+				fmt.Fprintln(w, "currentRate set to", getCurrentValue(f, p.TargetCurrency))
 				err := session.DB(DBNAME).C("webhooks").Insert(bson.M{"_id": id, "webhookURL": p.WebhookURL, "baseCurrency": p.BaseCurrency, "targetCurrency": p.TargetCurrency, "maxTriggerValue": p.MaxTriggerValue, "minTriggerValue": p.MinTriggerValue, "currentRate": getCurrentValue(f, p.TargetCurrency)})
 				if err != nil {
 					fmt.Fprintln(w, "Error in Insert()", err.Error())
