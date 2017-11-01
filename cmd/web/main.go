@@ -104,7 +104,8 @@ func root(w http.ResponseWriter, r *http.Request) {
 			if err == nil {
 				http.Error(w, "Object already exists", http.StatusBadRequest)
 			} else {
-				err := session.DB(DBNAME).C("webhooks").Insert(bson.M{"_id": bson.NewObjectId(), "webhookURL": p.WebhookURL, "baseCurrency": p.BaseCurrency, "targetCurrency": p.TargetCurrency, "maxTriggerValue": p.MaxTriggerValue, "minTriggerValue": p.MinTriggerValue, "currentRate": 0})
+				id := bson.NewObjectId()
+				err := session.DB(DBNAME).C("webhooks").Insert(bson.M{"_id": id, "webhookURL": p.WebhookURL, "baseCurrency": p.BaseCurrency, "targetCurrency": p.TargetCurrency, "maxTriggerValue": p.MaxTriggerValue, "minTriggerValue": p.MinTriggerValue, "currentRate": 0})
 				if err != nil {
 					fmt.Fprintln(w, "Error in Insert()", err.Error())
 				}
