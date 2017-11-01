@@ -23,7 +23,7 @@ type Postload struct {
 //Webhook retrieves data from the webhook collection:
 type Webhook struct {
 	ID              bson.ObjectId `json:"_id" bson:"_id"`
-	WebhookURL      string        `json:"webhookURL"`
+	WebhookURL      string        `json:"webhookURL" bson:"webhookURL"`
 	BaseCurrency    string        `json:"baseCurrency"`
 	TargetCurrency  string        `json:"targetCurrency"`
 	MinTriggerValue float32       `json:"minTriggerValue"`
@@ -105,7 +105,6 @@ func root(w http.ResponseWriter, r *http.Request) {
 				http.Error(w, "Object already exists", http.StatusBadRequest)
 			} else {
 				id := bson.NewObjectId()
-				fmt.Fprintln(w, "id first:", id)
 				err := session.DB(DBNAME).C("webhooks").Insert(bson.M{"_id": id, "webhookURL": p.WebhookURL, "baseCurrency": p.BaseCurrency, "targetCurrency": p.TargetCurrency, "maxTriggerValue": p.MaxTriggerValue, "minTriggerValue": p.MinTriggerValue, "currentRate": 0})
 				if err != nil {
 					fmt.Fprintln(w, "Error in Insert()", err.Error())
