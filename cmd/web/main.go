@@ -88,14 +88,22 @@ func getAverage(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			http.Error(w, "Could not get average value", http.StatusBadRequest)
 		} else {
-			var total float32
+			var total float64
+			var amount float64
+			amount = 0
 			for i, k := range f {
-				for j, l := range k.Rates {
+
+				for j, l := range f[i].Rates {
+					/*if j ==  {
+						total = total + l
+
+						amount++
+					}*/
 					fmt.Fprintln(w, "j", j, "l", l)
 				}
 				fmt.Fprintln(w, "i", i, "k", k)
 			}
-			fmt.Fprintln(w, " ", total)
+			fmt.Fprintln(w, " ", total/amount)
 		}
 	}
 }
