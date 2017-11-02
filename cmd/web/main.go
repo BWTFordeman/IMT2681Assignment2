@@ -178,7 +178,7 @@ func getLatest(w http.ResponseWriter, r *http.Request) {
 		f := Fixer{}
 		t := time.Now()
 		if t.Hour() < 17 {
-			t = t.AddDate(0, 0, -1)
+			//t = t.AddDate(0, 0, -1)
 		}
 		err = session.DB(DBNAME).C("fixerdata").Find(bson.M{"date": t.Format("2006-01-02")}).One(&f)
 		if err != nil {
