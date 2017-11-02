@@ -185,7 +185,7 @@ func getLatest(w http.ResponseWriter, r *http.Request) {
 			fmt.Fprintln(w, "Could not get currentRate data")
 		}
 
-		fmt.Fprintln(w, getCurrentValue(f, l.TargetCurrency))
+		fmt.Fprintln(w, getCurrentValue(w, f, l.TargetCurrency))
 	}
 }
 
@@ -295,7 +295,7 @@ func root(w http.ResponseWriter, r *http.Request) {
 					fmt.Println("Currentdata set to 0, could not find current value")
 				}
 				id := bson.NewObjectId()
-				err := session.DB(DBNAME).C("webhooks").Insert(bson.M{"_id": id, "webhookURL": p.WebhookURL, "baseCurrency": p.BaseCurrency, "targetCurrency": p.TargetCurrency, "maxTriggerValue": p.MaxTriggerValue, "minTriggerValue": p.MinTriggerValue, "currentRate": getCurrentValue(f, p.TargetCurrency)})
+				err := session.DB(DBNAME).C("webhooks").Insert(bson.M{"_id": id, "webhookURL": p.WebhookURL, "baseCurrency": p.BaseCurrency, "targetCurrency": p.TargetCurrency, "maxTriggerValue": p.MaxTriggerValue, "minTriggerValue": p.MinTriggerValue, "currentRate": getCurrentValue(w, f, p.TargetCurrency)})
 				if err != nil {
 					fmt.Fprintln(w, "Error in Insert()", err.Error())
 				}
@@ -313,8 +313,9 @@ func root(w http.ResponseWriter, r *http.Request) {
 }
 
 //Returns float value of current data
-func getCurrentValue(f Fixer, targetCurrency string) float64 {
+func getCurrentValue(w http.ResponseWriter, f Fixer, targetCurrency string) float64 {
 
+	fmt.Fprintln(w, "Hello motherfucker!")
 	for i, k := range f.Rates {
 		if targetCurrency == i {
 			return k
