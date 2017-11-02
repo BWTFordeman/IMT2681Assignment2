@@ -33,9 +33,14 @@ type Webhook struct {
 	CurrentRate     float32       `json:"currentRate" bson:"currentRate"`
 }
 
+//Latest gets the latest value
+type Latest struct {
+	BaseCurrency   string `json:"baseCurrency"`
+	TargetCurrency string `json:"targetCurrency"`
+}
+
 /*Fixer retrieves data from fixer collection:				//Rates map[string]float64 `json:"rates"`
 Use for i := range rates {
-
 }*/
 type Fixer struct {
 	BaseCurrency string `json:"base"`
@@ -80,11 +85,43 @@ func main() {
 	r.HandleFunc("/", root)
 	r.HandleFunc("/{id}", getWebhooks).Methods("GET")
 	r.HandleFunc("/{id}", deleteWebhooks).Methods("DELETE")
+	r.HandleFunc("/latest", getLatest).Methods("POST")
 	http.Handle("/", r)
 	fmt.Println("listening...")
 	err := http.ListenAndServe(":"+os.Getenv("PORT"), nil)
 	if err != nil {
 		fmt.Println(err.Error(), "Panic or something")
+	}
+}
+
+func getLatest(w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+	var l Latest
+
+	err := decoder.Decode(&l)
+	if err != nil {
+		http.Error(w, "Error decoding latest post", http.StatusBadRequest)
+	} else {
+		//Connecting to database:
+		USER := os.Getenv("DB_USER")
+		PASSWORD := os.Getenv("DB_PASSWORD")
+		DBNAME := os.Getenv("DB_NAME")
+		tempstring := ("mongodb://" + USER + ":" + PASSWORD + "@ds241055.mlab.com:41055/imt2681")
+
+		session, err := mgo.Dial(tempstring)
+		if err != nil {
+			panic(err)
+		}
+		defer session.Close()
+		//Getting current value:
+		f := Fixer{}
+		k := time.Now()
+		err = session.DB(DBNAME).C("fixerdata").Find(bson.M{"date": k.String()}).One(&f)
+		if err != nil {
+			fmt.Fprintln(w, "Could not get currentRate data")
+		}
+
+		fmt.Fprintln(w, getCurrentValue(f, l.TargetCurrency))
 	}
 }
 
