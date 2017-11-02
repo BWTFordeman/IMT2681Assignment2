@@ -55,19 +55,12 @@ func main() {
 	r.HandleFunc("/{id}", deleteWebhooks).Methods("DELETE")
 	r.HandleFunc("/latest", getLatest).Methods("POST")
 	r.HandleFunc("/average", getAverage).Methods("POST")
-	r.HandleFunc("/evaluationtrigger", triggerwebhooks)
-	r.HandleFunc("/e", he)
+	r.HandleFunc("/evaluationtrigger", triggerwebhooks).Methods("GET")
 	http.Handle("/", r)
 	fmt.Println("listening...")
 	err := http.ListenAndServe(":"+os.Getenv("PORT"), nil)
 	if err != nil {
 		fmt.Println(err.Error(), "Panic or something")
-	}
-}
-
-func he(w http.ResponseWriter, r *http.Request) {
-	if r.Method == "GET" {
-		fmt.Fprintln(w, "Get shit donw")
 	}
 }
 
