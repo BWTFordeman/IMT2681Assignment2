@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -90,23 +92,65 @@ func getAverage(w http.ResponseWriter, r *http.Request) {
 		} else {
 			var total float64
 			var amount float64
+			total = 0
 			amount = 0
 			for _, k := range f { //range over 3 days
 				for y, j := range k.Rates { //Range over all languages
 					if y == l.TargetCurrency {
-						fmt.Fprintln(w, "what ", total)
 						total = total + j
 						amount++
 					}
 				}
 			}
-			fmt.Fprintln(w, "what ", total)
+			fmt.Fprintln(w, total/amount)
 		}
 	}
 }
 
+//triggerwebhooks sends messages to all webhooks that have current value breaking the threshold
 func triggerwebhooks(w http.ResponseWriter, r *http.Request) {
+	//Connect to database:
+	USER := os.Getenv("DB_USER")
+	PASSWORD := os.Getenv("DB_PASSWORD")
+	DBNAME := os.Getenv("DB_NAME")
+	tempstring := ("mongodb://" + USER + ":" + PASSWORD + "@ds241055.mlab.com:41055/imt2681")
+	session, err := mgo.Dial(tempstring)
+	if err != nil {
+		fmt.Println("Error connecting to database", err.Error())
+	}
+	defer session.Close()
 
+	web := []Webhook{}
+	err = session.DB(DBNAME).C("webhooks").Find(nil).All(&web)
+	if err != nil {
+		fmt.Println("webhooks - Could not find any webhooks")
+	} else {
+		//Check the values and invokeWebhook when required
+		for i := range web {
+			if web[i].CurrentRate > web[i].MaxTriggerValue || web[i].CurrentRate < web[i].MinTriggerValue {
+
+				invokeWebhook(web[i].WebhookURL, web[i].TargetCurrency, web[i].CurrentRate, web[i].MinTriggerValue, web[i].MaxTriggerValue)
+			}
+		}
+	}
+}
+
+//invokeWebhook sends messages for one webhook in the system
+func invokeWebhook(webhookURL string, targetCurrency string, currentRate float32, minTriggerValue float32, maxTriggerValue float32) {
+	current := strconv.FormatFloat(float64(currentRate), 'f', 2, 32)
+	mintrigger := strconv.FormatFloat(float64(minTriggerValue), 'f', 2, 32)
+	maxtrigger := strconv.FormatFloat(float64(maxTriggerValue), 'f', 2, 32)
+	res, err := http.PostForm(webhookURL, url.Values{"content": {"{\n\tbaseCurrency: EUR" + "\n\ttargetCurrency:\t" + targetCurrency + "\n\tcurrentRate:\t" + current + "\n\tminTriggerValue:\t" + mintrigger + "\n\tmaxTriggerValue:\t" + maxtrigger + "\n}"}, "username": {"CurrencyChecker"}})
+	if err != nil {
+		fmt.Println("Error posting webhook message")
+	} else {
+		fmt.Println("A webhook message is sent")
+	}
+	if res.StatusCode == 200 || res.StatusCode == 204 {
+		fmt.Println("statuscode: ", res.StatusCode)
+	} else {
+		fmt.Println("Wrong status: ", res.StatusCode, http.StatusText(res.StatusCode))
+	}
 }
 
 func getLatest(w http.ResponseWriter, r *http.Request) {
