@@ -99,7 +99,7 @@ func getAverage(w http.ResponseWriter, r *http.Request) {
 					}
 				}
 			}
-			fmt.Fprintln(w, total)
+			fmt.Fprintln(w, "what ", total)
 		}
 	}
 }
