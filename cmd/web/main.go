@@ -94,6 +94,7 @@ func getAverage(w http.ResponseWriter, r *http.Request) {
 			for _, k := range f { //range over 3 days
 				for y, j := range k.Rates { //Range over all languages
 					if y == l.TargetCurrency {
+						fmt.Fprintln(w, "what ", total)
 						total = total + j
 						amount++
 					}
