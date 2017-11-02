@@ -66,7 +66,9 @@ func main() {
 }
 
 func he(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "Get shit donw")
+	if r.Method == "GET" {
+		fmt.Fprintln(w, "Get shit donw")
+	}
 }
 
 func getAverage(w http.ResponseWriter, r *http.Request) {
