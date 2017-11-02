@@ -100,7 +100,10 @@ func getAverage(w http.ResponseWriter, r *http.Request) {
 
 							amount++
 						}*/
-						fmt.Fprintln(w, "j", j, "l", l)
+						amount++
+						if amount < 1 {
+							fmt.Fprintln(w, "j", j, "l", l)
+						}
 					}
 					fmt.Fprintln(w, "y", y, "u", u)
 				}
