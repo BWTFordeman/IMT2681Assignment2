@@ -56,7 +56,7 @@ func main() {
 	r.HandleFunc("/latest", getLatest).Methods("POST")
 	r.HandleFunc("/average", getAverage).Methods("POST")
 	r.HandleFunc("/evaluationtrigger", triggerwebhooks)
-	r.HandleFunc("/evaluationtriggert", he)
+	r.HandleFunc("/e", he)
 	http.Handle("/", r)
 	fmt.Println("listening...")
 	err := http.ListenAndServe(":"+os.Getenv("PORT"), nil)
