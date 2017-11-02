@@ -39,9 +39,7 @@ type Latest struct {
 	TargetCurrency string `json:"targetCurrency"`
 }
 
-/*Fixer retrieves data from fixer collection:				//Rates map[string]float64 `json:"rates"`
-Use for i := range rates {
-}*/
+//Fixer retrieves data from fixer collection:
 type Fixer struct {
 	BaseCurrency string             `json:"base"`
 	Date         string             `json:"date"`
@@ -64,7 +62,6 @@ func main() {
 	}
 }
 
-//Should fix map[string]float64 before this one...
 func getAverage(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	var l Latest
@@ -77,7 +74,6 @@ func getAverage(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-//Should fix map[string]float64 before this one...
 func triggerwebhooks(w http.ResponseWriter, r *http.Request) {
 
 }
@@ -101,15 +97,13 @@ func getLatest(w http.ResponseWriter, r *http.Request) {
 			panic(err)
 		}
 		defer session.Close()
+
 		//Getting current value:
 		f := Fixer{}
-		//use date stuff like this:!!!!!
 		t := time.Now()
-
 		if t.Hour() < 17 {
 			t = t.AddDate(0, 0, -1)
 		}
-		fmt.Fprintln(w, "time", t.Format("2006-01-02"))
 		err = session.DB(DBNAME).C("fixerdata").Find(bson.M{"date": t.Format("2006-01-02")}).One(&f)
 		if err != nil {
 			fmt.Fprintln(w, "Could not get currentRate data")
