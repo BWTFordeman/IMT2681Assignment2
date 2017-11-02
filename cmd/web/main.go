@@ -91,14 +91,11 @@ func getAverage(w http.ResponseWriter, r *http.Request) {
 			var total float64
 			var amount float64
 			amount = 0
-			for i, k := range f { //range over 3 days
-				for y := range k.Rates { //Range over all languages
-
-					for j, l := range f[i].Rates { //Check which one it is equal to
-						if j == y {
-							total = total + l
-							amount++
-						}
+			for _, k := range f { //range over 3 days
+				for y, j := range k.Rates { //Range over all languages
+					if y == l.TargetCurrency {
+						total = total + j
+						amount++
 					}
 				}
 			}
