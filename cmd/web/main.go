@@ -316,8 +316,8 @@ func root(w http.ResponseWriter, r *http.Request) {
 func getCurrentValue(w http.ResponseWriter, f Fixer, targetCurrency string) float64 {
 
 	for i, k := range f.Rates {
+		fmt.Fprintln(w, "target", targetCurrency, "i", i)
 		if targetCurrency == i {
-			fmt.Fprintln(w, "damn bro")
 			return k
 		}
 	}
