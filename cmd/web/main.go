@@ -51,11 +51,11 @@ type Fixer struct {
 func main() {
 	r := mux.NewRouter()
 	r.HandleFunc("/", root)
+	r.HandleFunc("/evaluationtrigger", triggerwebhooks).Methods("GET")
 	r.HandleFunc("/{id}", getWebhooks).Methods("GET")
 	r.HandleFunc("/{id}", deleteWebhooks).Methods("DELETE")
 	r.HandleFunc("/latest", getLatest).Methods("POST")
 	r.HandleFunc("/average", getAverage).Methods("POST")
-	r.HandleFunc("/evaluationtrigger", triggerwebhooks).Methods("GET")
 	http.Handle("/", r)
 	fmt.Println("listening...")
 	err := http.ListenAndServe(":"+os.Getenv("PORT"), nil)
