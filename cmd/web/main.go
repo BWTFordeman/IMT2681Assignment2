@@ -70,7 +70,33 @@ func getAverage(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, "Error decoding post request for average", http.StatusBadRequest)
 	} else {
+		//Connecting to database:
+		USER := os.Getenv("DB_USER")
+		PASSWORD := os.Getenv("DB_PASSWORD")
+		DBNAME := os.Getenv("DB_NAME")
+		tempstring := ("mongodb://" + USER + ":" + PASSWORD + "@ds241055.mlab.com:41055/imt2681")
 
+		session, err := mgo.Dial(tempstring)
+		if err != nil {
+			panic(err)
+		}
+		defer session.Close()
+		//Get values of 3 days and sends average:
+		f := []Fixer{}
+
+		err = session.DB(DBNAME).C("fixerdata").Find(nil).All(&f)
+		if err != nil {
+			http.Error(w, "Could not get average value", http.StatusBadRequest)
+		} else {
+			var total float32
+			for i, k := range f {
+				for j, l := range k.Rates {
+					fmt.Fprintln(w, "j", j, "l", l)
+				}
+				fmt.Fprintln(w, "i", i, "k", k)
+			}
+			fmt.Fprintln(w, " ", total)
+		}
 	}
 }
 
@@ -116,7 +142,7 @@ func getLatest(w http.ResponseWriter, r *http.Request) {
 func deleteWebhooks(w http.ResponseWriter, r *http.Request) {
 	url := r.URL.Path
 	url2 := strings.Split(url, "/")
-	//Check that url2[1] = 24 values long for id
+	//TODO Check that url2[1] = 24 values long for id
 
 	USER := os.Getenv("DB_USER")
 	PASSWORD := os.Getenv("DB_PASSWORD")
