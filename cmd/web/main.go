@@ -115,10 +115,16 @@ func getLatest(w http.ResponseWriter, r *http.Request) {
 		defer session.Close()
 		//Getting current value:
 		f := Fixer{}
-		k := time.Now()
-		err = session.DB(DBNAME).C("fixerdata").Find(bson.M{"date": k.String()}).One(&f)
+		//use date stuff like this:!!!!!
+		t := time.Now()
+
+		if t.Hour() < 17 {
+			t = t.AddDate(0, 0, -1)
+		}
+
+		err = session.DB(DBNAME).C("fixerdata").Find(bson.M{"date": t.Format("2006-01-15")}).One(&f)
 		if err != nil {
-			fmt.Fprintln(w, "Could not get currentRate data", k.Year(), k.Month(), k.Day(), k.UTC())
+			fmt.Fprintln(w, "Could not get currentRate data")
 		}
 
 		fmt.Fprintln(w, getCurrentValue(f, l.TargetCurrency))
@@ -221,7 +227,12 @@ func root(w http.ResponseWriter, r *http.Request) {
 			} else { //Get currentRate from fixerdata collection and put that in currentRate.
 				f := Fixer{}
 				k := time.Now()
-				err = session.DB(DBNAME).C("fixerdata").Find(bson.M{"date": k.String()}).One(&f)
+
+				if k.Hour() < 17 {
+					k = k.AddDate(0, 0, -1)
+				}
+
+				err = session.DB(DBNAME).C("fixerdata").Find(bson.M{"date": k.Format("2006-01-15")}).One(&f)
 				if err != nil {
 					fmt.Fprintln(w, "Could not get currentRate data")
 				}

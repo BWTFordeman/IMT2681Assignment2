@@ -86,7 +86,11 @@ func getFixerData() Fixer {
 	if err != nil {
 		fmt.Print("3", err.Error())
 	}
-	k := time.Now().AddDate(0, 0, -3)
+	k := time.Now()
+	if k.Hour() < 17 {
+		k = k.AddDate(0, 0, -1)
+	}
+	k.AddDate(0, 0, -3)
 
 	//Connect to database:
 	USER := os.Getenv("DB_USER")
@@ -100,16 +104,21 @@ func getFixerData() Fixer {
 	defer session.Close()
 
 	//if date of object is less than k then remove from database
-	err = session.DB(DBNAME).C("fixerdata").Remove(bson.M{"date": bson.M{"$lt": k.String()}})
+	err = session.DB(DBNAME).C("fixerdata").Remove(bson.M{"date": k.Format("2006-01-15")})
 	if err != nil {
 		fmt.Println("fixerdata - No data older than 3 days")
 	}
-
+	fmt.Println("date", f.Date)
 	//If date doesn't already exist - add part to database:
 	d := Fixer{}
-	err = session.DB(DBNAME).C("fixerdata").Find(bson.M{"date": time.Now()}).One(&d)
+	t := time.Now()
+	if t.Hour() < 17 {
+		t = t.AddDate(0, 0, -1)
+	}
+
+	err = session.DB(DBNAME).C("fixerdata").Find(bson.M{"date": t.Format("2006-01-15")}).One(&d)
 	if err != nil {
-		err = session.DB(DBNAME).C("fixerdata").Insert(bson.M{"baseCurrency": f.BaseCurrency, "date": time.Now(), "rates": f.Rates})
+		err = session.DB(DBNAME).C("fixerdata").Insert(bson.M{"baseCurrency": f.BaseCurrency, "date": f.Date, "rates": f.Rates})
 		if err != nil {
 			fmt.Println("Error in Insert()", err.Error())
 		}
