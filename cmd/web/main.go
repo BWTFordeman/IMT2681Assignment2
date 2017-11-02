@@ -292,7 +292,7 @@ func root(w http.ResponseWriter, r *http.Request) {
 
 				err = session.DB(DBNAME).C("fixerdata").Find(bson.M{"date": k.Format("2006-01-02")}).One(&f)
 				if err != nil {
-					//fmt.Println("Currentdata set to 0, could not find current value")
+					fmt.Println("Currentdata set to 0, could not find current value")
 				}
 				id := bson.NewObjectId()
 				err := session.DB(DBNAME).C("webhooks").Insert(bson.M{"_id": id, "webhookURL": p.WebhookURL, "baseCurrency": p.BaseCurrency, "targetCurrency": p.TargetCurrency, "maxTriggerValue": p.MaxTriggerValue, "minTriggerValue": p.MinTriggerValue, "currentRate": getCurrentValue(f, p.TargetCurrency)})
