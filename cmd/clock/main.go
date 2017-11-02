@@ -506,20 +506,16 @@ func invokeWebhook(webhookURL string, targetCurrency string, currentRate float32
 }
 
 func main() {
+	delay := time.Minute * 20
 	f := getFixerData()
 	updateWebhooks(f)
 	sendToWebhooks()
 
 	//Timer:
-	start := time.Now()
 	for {
-		delay := time.Minute * 20
-		elapsed := time.Now().Sub(start)
-		if elapsed > time.Hour*24 {
-			start = time.Now()
-			g := getFixerData()
-			updateWebhooks(g)
-		}
 		time.Sleep(delay)
+		g := getFixerData()
+		updateWebhooks(g)
+		sendToWebhooks()
 	}
 }
