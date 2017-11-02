@@ -51,11 +51,11 @@ type Fixer struct {
 func main() {
 	r := mux.NewRouter()
 	r.HandleFunc("/", root)
+	r.HandleFunc("/evaluationtrigger", triggerwebhooks).Methods("GET")
 	r.HandleFunc("/{id}", getWebhooks).Methods("GET")
 	r.HandleFunc("/{id}", deleteWebhooks).Methods("DELETE")
 	r.HandleFunc("/latest", getLatest).Methods("POST")
 	r.HandleFunc("/average", getAverage).Methods("POST")
-	r.HandleFunc("/evaluationtrigger", triggerwebhooks).Methods("GET")
 	http.Handle("/", r)
 	fmt.Println("listening...")
 	err := http.ListenAndServe(":"+os.Getenv("PORT"), nil)
@@ -110,6 +110,7 @@ func getAverage(w http.ResponseWriter, r *http.Request) {
 //triggerwebhooks sends messages to all webhooks that have current value breaking the threshold
 func triggerwebhooks(w http.ResponseWriter, r *http.Request) {
 	//Connect to database:
+	fmt.Fprintln(w, "Hello brother")
 	USER := os.Getenv("DB_USER")
 	PASSWORD := os.Getenv("DB_PASSWORD")
 	DBNAME := os.Getenv("DB_NAME")
