@@ -107,9 +107,9 @@ func getFixerData() Fixer {
 
 	//If date doesn't already exist - add part to database:
 	d := Fixer{}
-	err = session.DB(DBNAME).C("fixerdata").Find(bson.M{"date": f.Date}).One(&d)
+	err = session.DB(DBNAME).C("fixerdata").Find(bson.M{"date": time.Now()}).One(&d)
 	if err != nil {
-		err = session.DB(DBNAME).C("fixerdata").Insert(bson.M{"baseCurrency": f.BaseCurrency, "date": f.Date, "rates": f.Rates})
+		err = session.DB(DBNAME).C("fixerdata").Insert(bson.M{"baseCurrency": f.BaseCurrency, "date": time.Now(), "rates": f.Rates})
 		if err != nil {
 			fmt.Println("Error in Insert()", err.Error())
 		}
