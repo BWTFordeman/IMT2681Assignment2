@@ -56,12 +56,17 @@ func main() {
 	r.HandleFunc("/latest", getLatest).Methods("POST")
 	r.HandleFunc("/average", getAverage).Methods("POST")
 	r.HandleFunc("/evaluationtrigger", triggerwebhooks).Methods("GET")
+	r.HandleFunc("/evaluationtriggert", he).Methods("GET")
 	http.Handle("/", r)
 	fmt.Println("listening...")
 	err := http.ListenAndServe(":"+os.Getenv("PORT"), nil)
 	if err != nil {
 		fmt.Println(err.Error(), "Panic or something")
 	}
+}
+
+func he(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintln(w, "Get shit donw")
 }
 
 func getAverage(w http.ResponseWriter, r *http.Request) {
