@@ -148,7 +148,7 @@ func getLatest(w http.ResponseWriter, r *http.Request) {
 		t := time.Now()
 		err = session.DB(DBNAME).C("fixerdata").Find(bson.M{"date": t.Format("2006-01-02")}).One(&f)
 		if err != nil {
-			fmt.Fprintln(w, "Could not get currentRate data")
+			fmt.Fprintln(w, "Could not get currentRate data", f.Rates)
 		} else {
 			fmt.Fprintln(w, getCurrentValue(f, l.TargetCurrency))
 		}
