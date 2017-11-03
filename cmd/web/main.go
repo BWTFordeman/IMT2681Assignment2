@@ -49,7 +49,6 @@ type Fixer struct {
 }
 
 func main() {
-	//http.HandleFunc("/", root)
 	r := mux.NewRouter()
 	//r.HandleFunc("/", root)
 	r.HandleFunc("/evaluationtrigger", triggerwebhooks).Methods("GET")
@@ -229,7 +228,6 @@ func root(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			fmt.Fprintln(w, "Error decoding webhook post", err.Error())
 		}
-
 		//Check if currencies are of valid types.
 		var base = false
 		var target = false

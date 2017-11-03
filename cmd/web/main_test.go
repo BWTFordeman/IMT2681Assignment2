@@ -1,10 +1,63 @@
 package main
 
 import (
+	"encoding/json"
+	"io/ioutil"
+	"net/http"
+	"net/http/httptest"
+	"strings"
 	"testing"
 )
 
-/*func TestRoot(t *testing.T) {
+func TestRoot2(t *testing.T) {
+	//Send message
+	var data Postload
+	data.WebhookURL = "https://discordapp.com/api/webhooks/373975976834498560/S9vVxSvLRHpA3V8-F-EAKoB2IGlf0kpUvrJSeYtFI7dzCcCNnkebfiLd0yngTc2UtwF-"
+	data.BaseCurrency = "EUR"
+	data.TargetCurrency = "USD"
+	data.MinTriggerValue = 1
+	data.MaxTriggerValue = 3
+	m, err := json.Marshal(data)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	req, err := http.NewRequest("POST", "/", ioutil.NopCloser(strings.NewReader(string(m))))
+	req.Header.Add("Content-Type", "application/json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	rr := httptest.NewRecorder()
+	handler := http.HandlerFunc(root)
+
+	handler.ServeHTTP(rr, req)
+}
+
+/*func TestRoot2(t *testing.T) {          //This one could be giving 5.7% more test coverage if the webhook object the user tries to put in
+	//Send message                          //is not in the database from before
+	var data Postload
+	data.WebhookURL = "https://discordapp.com/api/webhooks/373975976834498560/S9vVxSvLRHpA3V8-F-EAKoB2IGlf0kpUvrJSeYtFI7dzCcCNnkebfiLd0yngTc2UtwF-"
+	data.BaseCurrency = "EUR"
+	data.TargetCurrency = "USD"
+	data.MinTriggerValue = 1
+	data.MaxTriggerValue = 3
+	m, err := json.Marshal(data)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	req, err := http.NewRequest("POST", "/", ioutil.NopCloser(strings.NewReader(string(m))))
+	req.Header.Add("Content-Type", "application/json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	rr := httptest.NewRecorder()
+	handler := http.HandlerFunc(root)
+
+	handler.ServeHTTP(rr, req)
+}*/
+
+func TestRoot(t *testing.T) {
 	req, err := http.NewRequest("GET", "/", nil)
 	if err != nil {
 		t.Fatal(err)
@@ -13,30 +66,20 @@ import (
 	handler := http.HandlerFunc(root)
 
 	handler.ServeHTTP(rr, req)
-	// Check the status code is what we expect.
-	if status := rr.Code; status != http.StatusOK {
-		t.Errorf("handler returned wrong status code: got %v want %v",
-			status, http.StatusOK)
-	}
 
-	// Check the response body is what we expect.
-	expected := `{"alive": true}`
-	if rr.Body.String() != expected {
-		t.Errorf("handler returned unexpected body: got %v want %v",
-			rr.Body.String(), expected)
-	}
-}*/
+}
 
-/*func TestRoot2(t *testing.T) {
-	req, err := http.NewRequest("POST", "/", nil)
+func TestEvaluationTrigger(t *testing.T) { //Webhook messages get sent everytime ctrl+save
+	req, err := http.NewRequest("GET", "/evaluationtrigger", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(root)
+	handler := http.HandlerFunc(triggerwebhooks)
 
 	handler.ServeHTTP(rr, req)
-}*/
+
+}
 
 func TestFindAllWebhooks(t *testing.T) {
 	webhooks, err := findAllWebhooks()
