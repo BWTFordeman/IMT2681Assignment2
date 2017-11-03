@@ -33,10 +33,6 @@ func TestGetCurrentValue(t *testing.T) {
 	}
 }
 
-
-
-
-
 /*package main
 
 import (
@@ -44,9 +40,9 @@ import (
 )
 
 //TODO...
-/*func TestGetFixerData(t *testing.T) {     //This could be another one for splitting up getFixerData
+func TestGetFixerData(t *testing.T) {     //This could be another one for splitting up getFixerData
 
-}*/
+}
 
 func TestGetFixerData(t *testing.T) {
 
