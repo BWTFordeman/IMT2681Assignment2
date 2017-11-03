@@ -1,12 +1,10 @@
 package main
 
 import (
-	"net/http"
-	"net/http/httptest"
 	"testing"
 )
 
-func TestRoot(t *testing.T) {
+/*func TestRoot(t *testing.T) {
 	req, err := http.NewRequest("GET", "/", nil)
 	if err != nil {
 		t.Fatal(err)
@@ -27,7 +25,7 @@ func TestRoot(t *testing.T) {
 		t.Errorf("handler returned unexpected body: got %v want %v",
 			rr.Body.String(), expected)
 	}
-}
+}*/
 
 /*func TestRoot2(t *testing.T) {
 	req, err := http.NewRequest("POST", "/", nil)
