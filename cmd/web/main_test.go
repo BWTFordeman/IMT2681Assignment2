@@ -9,6 +9,10 @@ import (
 	"testing"
 )
 
+/*
+Used stuff from this site to help me with making tests: https://elithrar.github.io/article/testing-http-handlers-go/
+*/
+
 func TestGetLatest(t *testing.T) {
 	var data Latest
 	data.BaseCurrency = "EUR"
@@ -63,7 +67,7 @@ func TestGetAverage(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	req, err := http.NewRequest("POST", "/", ioutil.NopCloser(strings.NewReader(string(m))))
+	req, err := http.NewRequest("POST", "/average", ioutil.NopCloser(strings.NewReader(string(m))))
 	req.Header.Add("Content-Type", "application/json")
 	if err != nil {
 		t.Fatal(err)
