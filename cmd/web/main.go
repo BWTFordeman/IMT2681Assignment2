@@ -65,64 +65,33 @@ func main() {
 }
 
 func getAverage(w http.ResponseWriter, r *http.Request) {
-	decoder := json.NewDecoder(r.Body)
-	var l Latest
 
-	err := decoder.Decode(&l)
+	f, targetCurrency, err := findAverageOfPost(w, r)
+	//return f, TargetCurrency, err
+
 	if err != nil {
-		http.Error(w, "Error decoding post request for average", http.StatusBadRequest)
+		http.Error(w, "Could not get average value", http.StatusBadRequest)
 	} else {
-		//Connecting to database:
-		USER := os.Getenv("DB_USER")
-		PASSWORD := os.Getenv("DB_PASSWORD")
-		DBNAME := os.Getenv("DB_NAME")
-		tempstring := ("mongodb://" + USER + ":" + PASSWORD + "@ds241055.mlab.com:41055/imt2681")
-
-		session, err := mgo.Dial(tempstring)
-		if err != nil {
-			panic(err)
-		}
-		defer session.Close()
-		//Get values of 3 days and sends average:
-		f := []Fixer{}
-
-		err = session.DB(DBNAME).C("fixerdata").Find(nil).All(&f)
-		if err != nil {
-			http.Error(w, "Could not get average value", http.StatusBadRequest)
-		} else {
-			var total float64
-			var amount float64
-			total = 0
-			amount = 0
-			for _, k := range f { //range over 3 days
-				for y, j := range k.Rates { //Range over all languages
-					if y == l.TargetCurrency {
-						total = total + j
-						amount++
-					}
+		var total float64
+		var amount float64
+		total = 0
+		amount = 0
+		for _, k := range f { //range over 3 days
+			for y, j := range k.Rates { //Range over all languages
+				if y == targetCurrency {
+					total = total + j
+					amount++
 				}
 			}
-			fmt.Fprintln(w, total/amount)
 		}
+		fmt.Fprintln(w, total/amount)
 	}
 }
 
 //triggerwebhooks sends messages to all webhooks that have current value breaking the threshold
 func triggerwebhooks(w http.ResponseWriter, r *http.Request) {
-	//Connect to database:
-	fmt.Fprintln(w, "Hello brother")
-	USER := os.Getenv("DB_USER")
-	PASSWORD := os.Getenv("DB_PASSWORD")
-	DBNAME := os.Getenv("DB_NAME")
-	tempstring := ("mongodb://" + USER + ":" + PASSWORD + "@ds241055.mlab.com:41055/imt2681")
-	session, err := mgo.Dial(tempstring)
-	if err != nil {
-		fmt.Println("Error connecting to database", err.Error())
-	}
-	defer session.Close()
 
-	web := []Webhook{}
-	err = session.DB(DBNAME).C("webhooks").Find(nil).All(&web)
+	web, err := findAllWebhooks()
 	if err != nil {
 		fmt.Println("webhooks - Could not find any webhooks")
 	} else {
@@ -313,4 +282,52 @@ func getCurrentValue(f Fixer, targetCurrency string) float64 {
 		}
 	}
 	return 0
+}
+
+//testing:
+
+func findAllWebhooks() ([]Webhook, error) {
+	//Connect to database:
+	USER := os.Getenv("DB_USER")
+	PASSWORD := os.Getenv("DB_PASSWORD")
+	DBNAME := os.Getenv("DB_NAME")
+	tempstring := ("mongodb://" + USER + ":" + PASSWORD + "@ds241055.mlab.com:41055/imt2681")
+	session, err := mgo.Dial(tempstring)
+	if err != nil {
+		fmt.Println("Error connecting to database", err.Error())
+	}
+	defer session.Close()
+
+	web := []Webhook{}
+	err = session.DB(DBNAME).C("webhooks").Find(nil).All(&web)
+	return web, err
+}
+
+func findAverageOfPost(w http.ResponseWriter, r *http.Request) ([]Fixer, string, error) {
+	decoder := json.NewDecoder(r.Body)
+	var l Latest
+
+	err := decoder.Decode(&l)
+	if err != nil {
+		http.Error(w, "Error decoding post request for average", http.StatusBadRequest)
+	} else {
+		//Connecting to database:
+		USER := os.Getenv("DB_USER")
+		PASSWORD := os.Getenv("DB_PASSWORD")
+		DBNAME := os.Getenv("DB_NAME")
+		tempstring := ("mongodb://" + USER + ":" + PASSWORD + "@ds241055.mlab.com:41055/imt2681")
+
+		session, err1 := mgo.Dial(tempstring)
+		if err1 != nil {
+			fmt.Fprintln(w, "Could not contact database", http.StatusNotFound)
+		}
+		defer session.Close()
+		//Get values of 3 days and sends average:
+		f := []Fixer{}
+
+		err = session.DB(DBNAME).C("fixerdata").Find(nil).All(&f)
+		return f, l.TargetCurrency, err
+	}
+	var f []Fixer
+	return f, "", err
 }
