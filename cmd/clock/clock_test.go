@@ -4,6 +4,7 @@ import (
 	"testing"
 )
 
+//TODO...
 /*func TestGetFixerData(t *testing.T) {     //This could be another one for splitting up getFixerData
 
 }*/

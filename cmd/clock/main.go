@@ -78,7 +78,7 @@ func getFixerData() Fixer {
 
 	err = session.DB(DBNAME).C("fixerdata").Find(bson.M{"date": t.Format("2006-01-02")}).One(&d)
 	if err != nil {
-		fmt.Println("date", f.Date)
+		fmt.Println("date", t.Format("2006-01-02"))
 		err = session.DB(DBNAME).C("fixerdata").Insert(bson.M{"baseCurrency": f.BaseCurrency, "date": t.Format("2006-01-02"), "rates": f.Rates})
 		if err != nil {
 			fmt.Println("Error in Insert()", err.Error())
@@ -113,11 +113,10 @@ func updateWebhooks(f Fixer) {
 
 		//Goes through all targetcurrencies and checks if currentRate is same(prints out they are same)
 		//if not same{put the f.Rates value into database}
-		fmt.Println("Here comes the updating:")
+		fmt.Println("Updating ...")
 		for _, k := range web {
 			for j, l := range f.Rates {
 				if k.TargetCurrency == j {
-					fmt.Println("Updating", k.WebhookURL)
 					update := bson.M{"$set": bson.M{"currentRate": l}}
 					err := session.DB(DBNAME).C("webhooks").UpdateId(k.ID, update)
 					if err != nil {
@@ -148,6 +147,7 @@ func sendToWebhooks() {
 		fmt.Println("webhooks - Could not find any webhooks")
 	} else {
 		//Check the values and invokeWebhook when required
+		fmt.Println("Sending webhook messages")
 		for i := range web {
 			if web[i].CurrentRate > web[i].MaxTriggerValue || web[i].CurrentRate < web[i].MinTriggerValue {
 
@@ -155,6 +155,7 @@ func sendToWebhooks() {
 			}
 		}
 	}
+	fmt.Println("Done")
 }
 
 //TODO add validation for /slack or /github at end of webhookURL
@@ -167,11 +168,8 @@ func invokeWebhook(webhookURL string, targetCurrency string, currentRate float32
 	if err != nil {
 		fmt.Println("Error posting webhook message")
 	} else {
-		fmt.Println("A webhook message is sent")
 	}
-	if res.StatusCode == 200 || res.StatusCode == 204 {
-		fmt.Println("statuscode: ", res.StatusCode)
-	} else {
+	if !(res.StatusCode == 200 || res.StatusCode == 204) {
 		fmt.Println("Wrong status: ", res.StatusCode, http.StatusText(res.StatusCode))
 	}
 }

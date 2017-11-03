@@ -208,6 +208,7 @@ func getWebhooks(w http.ResponseWriter, r *http.Request) {
 }
 
 func root(w http.ResponseWriter, r *http.Request) {
+	//Connectin to database:
 	lang := [...]string{"EUR", "AUD", "BGN", "BRL", "CAD", "CHF", "CNY", "CZK", "DKK", "GBP", "HKD", "HRK", "HUF", "IDR", "ILS", "INR", "JPY", "KRW",
 		"MXN", "MYR", "NOK", "NZD", "PHP", "PLN", "RON", "RUB", "SEK", "SGD", "THB", "TRY", "USD", "ZAR"}
 	USER := os.Getenv("DB_USER")
@@ -222,6 +223,7 @@ func root(w http.ResponseWriter, r *http.Request) {
 	defer session.Close()
 
 	if r.Method == "POST" {
+		//Decoding
 		decoder := json.NewDecoder(r.Body)
 		var p Postload
 
@@ -290,19 +292,16 @@ func getCurrentValue(f Fixer, targetCurrency string) float64 {
 //testing:
 
 func findAllWebhooks(USER string, PASS string) ([]Webhook, error) {
-
+	web := []Webhook{}
 	//Connect to database:
-	//USER := os.Getenv("DB_USER")
-	//PASSWORD := os.Getenv("DB_PASSWORD")
 	DBNAME := os.Getenv("DB_NAME")
 	tempstring := ("mongodb://" + USER + ":" + PASS + "@ds241055.mlab.com:41055/imt2681")
 	session, err := mgo.Dial(tempstring)
 	if err != nil {
 		fmt.Println("Error connecting to database", err.Error())
+		return web, err
 	}
 	defer session.Close()
-
-	web := []Webhook{}
 	err = session.DB(DBNAME).C("webhooks").Find(nil).All(&web)
 	return web, err
 }
