@@ -79,7 +79,7 @@ func getFixerData() Fixer {
 	err = session.DB(DBNAME).C("fixerdata").Find(bson.M{"date": t.Format("2006-01-02")}).One(&d)
 	if err != nil {
 		fmt.Println("date", f.Date)
-		err = session.DB(DBNAME).C("fixerdata").Insert(bson.M{"baseCurrency": f.BaseCurrency, "date": f.Date, "rates": f.Rates})
+		err = session.DB(DBNAME).C("fixerdata").Insert(bson.M{"baseCurrency": f.BaseCurrency, "date": t.Format("2006-01-02"), "rates": f.Rates})
 		if err != nil {
 			fmt.Println("Error in Insert()", err.Error())
 		}
