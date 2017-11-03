@@ -95,6 +95,7 @@ func triggerwebhooks(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println("webhooks - Could not find any webhooks")
 	} else {
+		fmt.Fprintln(w, "Messages sent to whomever breaks the threshold", http.StatusOK)
 		//Check the values and invokeWebhook when required
 		for i := range web {
 			if web[i].CurrentRate > web[i].MaxTriggerValue || web[i].CurrentRate < web[i].MinTriggerValue {
@@ -148,7 +149,7 @@ func getLatest(w http.ResponseWriter, r *http.Request) {
 		t := time.Now()
 		err = session.DB(DBNAME).C("fixerdata").Find(bson.M{"date": t.Format("2006-01-02")}).One(&f)
 		if err != nil {
-			fmt.Fprintln(w, "Could not get currentRate data", f.Rates)
+			fmt.Fprintln(w, "Could not get currentRate data")
 		} else {
 			fmt.Fprintln(w, getCurrentValue(f, l.TargetCurrency))
 		}
