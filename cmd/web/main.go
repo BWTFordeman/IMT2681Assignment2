@@ -49,7 +49,7 @@ type Fixer struct {
 }
 
 func main() {
-	http.HandleFunc("/", root)
+	//http.HandleFunc("/", root)
 	r := mux.NewRouter()
 	//r.HandleFunc("/", root)
 	r.HandleFunc("/evaluationtrigger", triggerwebhooks).Methods("GET")
