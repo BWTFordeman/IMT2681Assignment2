@@ -1,18 +1,47 @@
 package main
 
 import (
+	"net/http"
+	"net/http/httptest"
 	"testing"
 )
 
-func TestFindAverageOfPost(t *testing.T) {
-	//getAverage(w, r)
-	//How to send w http.ResponseWriter, r *http.Request for testing purposes
+func TestRoot(t *testing.T) {
+	req, err := http.NewRequest("GET", "/", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	rr := httptest.NewRecorder()
+	handler := http.HandlerFunc(root)
+
+	handler.ServeHTTP(rr, req)
+	// Check the status code is what we expect.
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v",
+			status, http.StatusOK)
+	}
+
+	// Check the response body is what we expect.
+	expected := `{"alive": true}`
+	if rr.Body.String() != expected {
+		t.Errorf("handler returned unexpected body: got %v want %v",
+			rr.Body.String(), expected)
+	}
 }
 
+/*func TestRoot2(t *testing.T) {
+	req, err := http.NewRequest("POST", "/", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	rr := httptest.NewRecorder()
+	handler := http.HandlerFunc(root)
+
+	handler.ServeHTTP(rr, req)
+}*/
+
 func TestFindAllWebhooks(t *testing.T) {
-	name := "Fordeman"
-	pass := "12345"
-	webhooks, err := findAllWebhooks(name, pass)
+	webhooks, err := findAllWebhooks()
 	if err != nil {
 		t.Errorf("Could not find any webhooks %v", webhooks)
 	}
@@ -32,30 +61,3 @@ func TestGetCurrentValue(t *testing.T) {
 		t.Errorf("Expected a value for NOO, got:%v", j)
 	}
 }
-
-/*package main
-
-import (
-	"testing"
-)
-
-//TODO...
-func TestGetFixerData(t *testing.T) {     //This could be another one for splitting up getFixerData
-
-}
-
-func TestGetFixerData(t *testing.T) {
-
-}
-
-func TestUpdateWebhooks(t *testing.T) {
-
-}
-func TestSendToWebhooks(t *testing.T) {
-
-}
-
-func TestInvokeWebhook(t *testing.T) {
-
-}
-*/

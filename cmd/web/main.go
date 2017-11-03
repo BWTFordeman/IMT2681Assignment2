@@ -49,8 +49,9 @@ type Fixer struct {
 }
 
 func main() {
+	http.HandleFunc("/", root)
 	r := mux.NewRouter()
-	r.HandleFunc("/", root)
+	//r.HandleFunc("/", root)
 	r.HandleFunc("/evaluationtrigger", triggerwebhooks).Methods("GET")
 	r.HandleFunc("/{id}", getWebhooks).Methods("GET")
 	r.HandleFunc("/{id}", deleteWebhooks).Methods("DELETE")
@@ -90,10 +91,7 @@ func getAverage(w http.ResponseWriter, r *http.Request) {
 
 //triggerwebhooks sends messages to all webhooks that have current value breaking the threshold
 func triggerwebhooks(w http.ResponseWriter, r *http.Request) {
-	USER := os.Getenv("DB_USER")
-	PASSWORD := os.Getenv("DB_PASSWORD")
-
-	web, err := findAllWebhooks(USER, PASSWORD)
+	web, err := findAllWebhooks()
 	if err != nil {
 		fmt.Println("webhooks - Could not find any webhooks")
 	} else {
@@ -211,9 +209,9 @@ func root(w http.ResponseWriter, r *http.Request) {
 	//Connectin to database:
 	lang := [...]string{"EUR", "AUD", "BGN", "BRL", "CAD", "CHF", "CNY", "CZK", "DKK", "GBP", "HKD", "HRK", "HUF", "IDR", "ILS", "INR", "JPY", "KRW",
 		"MXN", "MYR", "NOK", "NZD", "PHP", "PLN", "RON", "RUB", "SEK", "SGD", "THB", "TRY", "USD", "ZAR"}
-	USER := os.Getenv("DB_USER")
-	PASSWORD := os.Getenv("DB_PASSWORD")
-	DBNAME := os.Getenv("DB_NAME")
+	USER := "Fordeman"
+	PASSWORD := "12345"
+	//DBNAME := os.Getenv("DB_NAME")
 	tempstring := ("mongodb://" + USER + ":" + PASSWORD + "@ds241055.mlab.com:41055/imt2681")
 
 	session, err := mgo.Dial(tempstring)
@@ -250,25 +248,25 @@ func root(w http.ResponseWriter, r *http.Request) {
 		} else {
 			//Create data in database if not there from before:
 			d := Webhook{}
-			err = session.DB(DBNAME).C("webhooks").Find(bson.M{"webhookURL": p.WebhookURL, "targetCurrency": p.TargetCurrency}).One(&d)
+			err = session.DB("imt2681").C("webhooks").Find(bson.M{"webhookURL": p.WebhookURL, "targetCurrency": p.TargetCurrency}).One(&d)
 			if err == nil {
 				http.Error(w, "Object already exists", http.StatusBadRequest)
 			} else { //Get currentRate from fixerdata collection and put that in currentRate.
 				f := Fixer{}
 				k := time.Now()
 
-				err = session.DB(DBNAME).C("fixerdata").Find(bson.M{"date": k.Format("2006-01-02")}).One(&f)
+				err = session.DB("imt2681").C("fixerdata").Find(bson.M{"date": k.Format("2006-01-02")}).One(&f)
 				if err != nil {
 					fmt.Println("Currentdata set to 0, could not find current value")
 				}
 				id := bson.NewObjectId()
-				err := session.DB(DBNAME).C("webhooks").Insert(bson.M{"_id": id, "webhookURL": p.WebhookURL, "baseCurrency": p.BaseCurrency, "targetCurrency": p.TargetCurrency, "maxTriggerValue": p.MaxTriggerValue, "minTriggerValue": p.MinTriggerValue, "currentRate": getCurrentValue(f, p.TargetCurrency)})
+				err := session.DB("imt2681").C("webhooks").Insert(bson.M{"_id": id, "webhookURL": p.WebhookURL, "baseCurrency": p.BaseCurrency, "targetCurrency": p.TargetCurrency, "maxTriggerValue": p.MaxTriggerValue, "minTriggerValue": p.MinTriggerValue, "currentRate": getCurrentValue(f, p.TargetCurrency)})
 				if err != nil {
 					fmt.Fprintln(w, "Error in Insert()", err.Error())
 				}
 
 				d = Webhook{}
-				err = session.DB(DBNAME).C("webhooks").Find(bson.M{"webhookURL": p.WebhookURL, "targetCurrency": p.TargetCurrency}).One(&d)
+				err = session.DB("imt2681").C("webhooks").Find(bson.M{"webhookURL": p.WebhookURL, "targetCurrency": p.TargetCurrency}).One(&d)
 				fmt.Fprintln(w, "Id of your webhook:", d.ID.Hex())
 			}
 		}
@@ -291,18 +289,17 @@ func getCurrentValue(f Fixer, targetCurrency string) float64 {
 
 //testing:
 
-func findAllWebhooks(USER string, PASS string) ([]Webhook, error) {
+func findAllWebhooks() ([]Webhook, error) {
 	web := []Webhook{}
 	//Connect to database:
-	DBNAME := os.Getenv("DB_NAME")
-	tempstring := ("mongodb://" + USER + ":" + PASS + "@ds241055.mlab.com:41055/imt2681")
+	tempstring := ("mongodb://" + "Fordeman" + ":" + "12345" + "@ds241055.mlab.com:41055/imt2681")
 	session, err := mgo.Dial(tempstring)
 	if err != nil {
 		fmt.Println("Error connecting to database", err.Error())
 		return web, err
 	}
 	defer session.Close()
-	err = session.DB(DBNAME).C("webhooks").Find(nil).All(&web)
+	err = session.DB("imt2681").C("webhooks").Find(nil).All(&web)
 	return web, err
 }
 
@@ -315,10 +312,7 @@ func findAverageOfPost(w http.ResponseWriter, r *http.Request) ([]Fixer, string,
 		http.Error(w, "Error decoding post request for average", http.StatusBadRequest)
 	} else {
 		//Connecting to database:
-		USER := os.Getenv("DB_USER")
-		PASSWORD := os.Getenv("DB_PASSWORD")
-		DBNAME := os.Getenv("DB_NAME")
-		tempstring := ("mongodb://" + USER + ":" + PASSWORD + "@ds241055.mlab.com:41055/imt2681")
+		tempstring := ("mongodb://" + "Fordeman" + ":" + "12345" + "@ds241055.mlab.com:41055/imt2681")
 
 		session, err1 := mgo.Dial(tempstring)
 		if err1 != nil {
@@ -328,7 +322,7 @@ func findAverageOfPost(w http.ResponseWriter, r *http.Request) ([]Fixer, string,
 		//Get values of 3 days and sends average:
 		f := []Fixer{}
 
-		err = session.DB(DBNAME).C("fixerdata").Find(nil).All(&f)
+		err = session.DB("imt2681").C("fixerdata").Find(nil).All(&f)
 		return f, l.TargetCurrency, err
 	}
 	var f []Fixer
