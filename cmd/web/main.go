@@ -90,8 +90,10 @@ func getAverage(w http.ResponseWriter, r *http.Request) {
 
 //triggerwebhooks sends messages to all webhooks that have current value breaking the threshold
 func triggerwebhooks(w http.ResponseWriter, r *http.Request) {
+	USER := os.Getenv("DB_USER")
+	PASSWORD := os.Getenv("DB_PASSWORD")
 
-	web, err := findAllWebhooks()
+	web, err := findAllWebhooks(USER, PASSWORD)
 	if err != nil {
 		fmt.Println("webhooks - Could not find any webhooks")
 	} else {
@@ -287,12 +289,13 @@ func getCurrentValue(f Fixer, targetCurrency string) float64 {
 
 //testing:
 
-func findAllWebhooks() ([]Webhook, error) {
+func findAllWebhooks(USER string, PASS string) ([]Webhook, error) {
+
 	//Connect to database:
-	USER := os.Getenv("DB_USER")
-	PASSWORD := os.Getenv("DB_PASSWORD")
+	//USER := os.Getenv("DB_USER")
+	//PASSWORD := os.Getenv("DB_PASSWORD")
 	DBNAME := os.Getenv("DB_NAME")
-	tempstring := ("mongodb://" + USER + ":" + PASSWORD + "@ds241055.mlab.com:41055/imt2681")
+	tempstring := ("mongodb://" + USER + ":" + PASS + "@ds241055.mlab.com:41055/imt2681")
 	session, err := mgo.Dial(tempstring)
 	if err != nil {
 		fmt.Println("Error connecting to database", err.Error())
