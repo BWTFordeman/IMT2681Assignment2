@@ -9,14 +9,10 @@ import (
 	"testing"
 )
 
-func TestRoot2(t *testing.T) {
-	//Send message
-	var data Postload
-	data.WebhookURL = "https://discordapp.com/api/webhooks/373975976834498560/S9vVxSvLRHpA3V8-F-EAKoB2IGlf0kpUvrJSeYtFI7dzCcCNnkebfiLd0yngTc2UtwF-"
+func TestGetLatest(t *testing.T) {
+	var data Latest
 	data.BaseCurrency = "EUR"
 	data.TargetCurrency = "USD"
-	data.MinTriggerValue = 1
-	data.MaxTriggerValue = 3
 	m, err := json.Marshal(data)
 	if err != nil {
 		t.Fatal(err)
@@ -28,12 +24,57 @@ func TestRoot2(t *testing.T) {
 		t.Fatal(err)
 	}
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(root)
+	handler := http.HandlerFunc(getLatest)
 
 	handler.ServeHTTP(rr, req)
 }
 
-/*func TestRoot2(t *testing.T) {          //This one could be giving 5.7% more test coverage if the webhook object the user tries to put in
+func TestDeleteWebhooks(t *testing.T) {
+	req, err := http.NewRequest("DELETE", "/59f9c8a16b022400044b8c74", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	rr := httptest.NewRecorder()
+	handler := http.HandlerFunc(deleteWebhooks)
+
+	handler.ServeHTTP(rr, req)
+
+}
+
+func TestGetWebhooks(t *testing.T) {
+	req, err := http.NewRequest("GET", "/59f9c8a16b022400044b8c74", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	rr := httptest.NewRecorder()
+	handler := http.HandlerFunc(getWebhooks)
+
+	handler.ServeHTTP(rr, req)
+
+}
+
+func TestGetAverage(t *testing.T) {
+	//Send message
+	var data Latest
+	data.BaseCurrency = "EUR"
+	data.TargetCurrency = "USD"
+	m, err := json.Marshal(data)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	req, err := http.NewRequest("POST", "/", ioutil.NopCloser(strings.NewReader(string(m))))
+	req.Header.Add("Content-Type", "application/json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	rr := httptest.NewRecorder()
+	handler := http.HandlerFunc(getAverage)
+
+	handler.ServeHTTP(rr, req)
+}
+
+func TestRoot2(t *testing.T) { //This one could be giving 5.7% more test coverage if the webhook object the user tries to put in
 	//Send message                          //is not in the database from before
 	var data Postload
 	data.WebhookURL = "https://discordapp.com/api/webhooks/373975976834498560/S9vVxSvLRHpA3V8-F-EAKoB2IGlf0kpUvrJSeYtFI7dzCcCNnkebfiLd0yngTc2UtwF-"
@@ -55,7 +96,7 @@ func TestRoot2(t *testing.T) {
 	handler := http.HandlerFunc(root)
 
 	handler.ServeHTTP(rr, req)
-}*/
+}
 
 func TestRoot(t *testing.T) {
 	req, err := http.NewRequest("GET", "/", nil)
@@ -79,13 +120,6 @@ func TestEvaluationTrigger(t *testing.T) { //Webhook messages get sent everytime
 
 	handler.ServeHTTP(rr, req)
 
-}
-
-func TestFindAllWebhooks(t *testing.T) {
-	webhooks, err := findAllWebhooks()
-	if err != nil {
-		t.Errorf("Could not find any webhooks %v", webhooks)
-	}
 }
 
 func TestGetCurrentValue(t *testing.T) {

@@ -6,13 +6,22 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"os"
 	"strconv"
 	"time"
 
 	mgo "gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
+
+//USER should be environmental variable, but wasn't able to use them for testing at the moment
+//so they are put here instead
+var USER = "Fordeman"
+
+//PASSWORD see USER
+var PASSWORD = "12345"
+
+//DBNAME see USER
+var DBNAME = "imt2681"
 
 //Webhook retrieves data from the webhook collection:
 type Webhook struct {
@@ -55,9 +64,6 @@ func getFixerData() Fixer {
 	}
 
 	//Connect to database:
-	USER := os.Getenv("DB_USER")
-	PASSWORD := os.Getenv("DB_PASSWORD")
-	DBNAME := os.Getenv("DB_NAME")
 	tempstring := ("mongodb://" + USER + ":" + PASSWORD + "@ds241055.mlab.com:41055/imt2681")
 	session, err := mgo.Dial(tempstring)
 	if err != nil {
@@ -93,9 +99,6 @@ func getFixerData() Fixer {
 func updateWebhooks(f Fixer) {
 
 	//Connect to database:
-	USER := os.Getenv("DB_USER")
-	PASSWORD := os.Getenv("DB_PASSWORD")
-	DBNAME := os.Getenv("DB_NAME")
 	tempstring := ("mongodb://" + USER + ":" + PASSWORD + "@ds241055.mlab.com:41055/imt2681")
 	session, err := mgo.Dial(tempstring)
 	if err != nil {
@@ -131,9 +134,6 @@ func updateWebhooks(f Fixer) {
 //Checks if any current values are beyond anyones threshold and thereafter send messages.
 func sendToWebhooks() {
 	//Connect to database:
-	USER := os.Getenv("DB_USER")
-	PASSWORD := os.Getenv("DB_PASSWORD")
-	DBNAME := os.Getenv("DB_NAME")
 	tempstring := ("mongodb://" + USER + ":" + PASSWORD + "@ds241055.mlab.com:41055/imt2681")
 	session, err := mgo.Dial(tempstring)
 	if err != nil {
