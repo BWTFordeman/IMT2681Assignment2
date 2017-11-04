@@ -121,7 +121,8 @@ func getAverage(w http.ResponseWriter, r *http.Request) {
 func triggerwebhooks(w http.ResponseWriter, r *http.Request) {
 	web, err := findAllWebhooks()
 	if err != nil {
-		http.Error(w, "Could not find any webhooks", http.StatusBadRequest)
+		fmt.Fprintln(w, "Could not find any webhooks", http.StatusBadRequest)
+		//http.Error(w, "Could not find any webhooks", http.StatusBadRequest)
 	} else {
 		http.Error(w, "Messages sent to whomever breaks the threshold:", http.StatusOK)
 		if web[0].WebhookURL == "" {
