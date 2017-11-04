@@ -141,9 +141,9 @@ func invokeWebhook(w http.ResponseWriter, webhookURL string, targetCurrency stri
 	maxtrigger := strconv.FormatFloat(float64(maxTriggerValue), 'f', 2, 32)
 	res, err := http.PostForm(webhookURL, url.Values{"content": {"{\n\tbaseCurrency: EUR" + "\n\ttargetCurrency:\t" + targetCurrency + "\n\tcurrentRate:\t" + current + "\n\tminTriggerValue:\t" + mintrigger + "\n\tmaxTriggerValue:\t" + maxtrigger + "\n}"}, "username": {"CurrencyChecker"}})
 	if err != nil {
-		fmt.Fprintln(w, "Error posting webhook message", res.Status)
+		fmt.Fprintln(w, "Error posting webhook message", res.StatusCode)
 	} else {
-		fmt.Println(w, "A webhook message is sent")
+		fmt.Fprintln(w, "A webhook message is sent")
 	}
 }
 
