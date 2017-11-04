@@ -136,6 +136,7 @@ func triggerwebhooks(w http.ResponseWriter, r *http.Request) {
 
 //invokeWebhook sends messages for one webhook in the system
 func invokeWebhook(w http.ResponseWriter, webhookURL string, targetCurrency string, currentRate float32, minTriggerValue float32, maxTriggerValue float32) {
+	fmt.Println("another test")
 	current := strconv.FormatFloat(float64(currentRate), 'f', 2, 32)
 	mintrigger := strconv.FormatFloat(float64(minTriggerValue), 'f', 2, 32)
 	maxtrigger := strconv.FormatFloat(float64(maxTriggerValue), 'f', 2, 32)
