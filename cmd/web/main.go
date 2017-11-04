@@ -119,26 +119,27 @@ func getAverage(w http.ResponseWriter, r *http.Request) {
 
 //triggerwebhooks sends messages to all webhooks that have current value breaking the threshold
 func triggerwebhooks(w http.ResponseWriter, r *http.Request) {
-
-	web, err := findAllWebhooks(w)
-	if err != nil {
-		http.Error(w, "Could not find any webhooks", http.StatusBadRequest)
-	} else {
-		http.Error(w, "Messages sent to whomever breaks the threshold:", http.StatusOK)
-		if web[0].WebhookURL == "" {
-			fmt.Fprintln(w, "webhookurl empty")
+	fmt.Fprintln(w, "Hello Christian")
+	/*
+		web, err := findAllWebhooks()
+		if err != nil {
+			http.Error(w, "Could not find any webhooks", http.StatusBadRequest)
 		} else {
-			fmt.Fprintln(w, "url:", web[0].WebhookURL)
-		}
-
-		//Check the values and invokeWebhook when required
-		for i := range web {
-			if web[i].CurrentRate > web[i].MaxTriggerValue || web[i].CurrentRate < web[i].MinTriggerValue {
-
-				invokeWebhook(w, web[i].WebhookURL, web[i].TargetCurrency, web[i].CurrentRate, web[i].MinTriggerValue, web[i].MaxTriggerValue)
+			http.Error(w, "Messages sent to whomever breaks the threshold:", http.StatusOK)
+			if web[0].WebhookURL == "" {
+				fmt.Fprintln(w, "webhookurl empty")
+			} else {
+				fmt.Fprintln(w, "url:", web[0].WebhookURL)
 			}
-		}
-	}
+
+			//Check the values and invokeWebhook when required
+			for i := range web {
+				if web[i].CurrentRate > web[i].MaxTriggerValue || web[i].CurrentRate < web[i].MinTriggerValue {
+
+					invokeWebhook(w, web[i].WebhookURL, web[i].TargetCurrency, web[i].CurrentRate, web[i].MinTriggerValue, web[i].MaxTriggerValue)
+				}
+			}
+		}*/
 }
 
 //invokeWebhook sends messages for one webhook in the system
@@ -304,7 +305,7 @@ func getCurrentValue(f Fixer, targetCurrency string) float64 {
 	return 0
 }
 
-func findAllWebhooks(w http.ResponseWriter) ([]Webhook, error) {
+func findAllWebhooks() ([]Webhook, error) {
 	web := []Webhook{}
 	//Connect to database:
 	tempstring := ("mongodb://" + USER + ":" + PASSWORD + "@ds241055.mlab.com:41055/imt2681")
@@ -315,6 +316,5 @@ func findAllWebhooks(w http.ResponseWriter) ([]Webhook, error) {
 	}
 	defer session.Close()
 	err = session.DB(DBNAME).C("webhooks").Find(nil).All(&web)
-	fmt.Fprintln(w, "error finding webhooks", err.Error())
 	return web, err
 }
