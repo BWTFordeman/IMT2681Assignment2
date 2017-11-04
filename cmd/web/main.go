@@ -121,25 +121,19 @@ func getAverage(w http.ResponseWriter, r *http.Request) {
 func triggerwebhooks(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, "Hello Christian")
 
-	web, err := findAllWebhooks()
-	if err != nil {
-		//http.Error(w, "Could not find any webhooks", http.StatusBadRequest)
-		fmt.Fprintln(w, web[0])
+	web := findAllWebhooks()
+	if web != nil {
+		http.Error(w, "Could not find any webhooks", http.StatusBadRequest)
 	} else {
-		//http.Error(w, "Messages sent to whomever breaks the threshold:", http.StatusOK)
-		if web[0].WebhookURL == "" {
-			fmt.Fprintln(w, "webhookurl empty")
-		} else {
-			fmt.Fprintln(w, "url:", web[0].WebhookURL)
-		}
-		/*
-			//Check the values and invokeWebhook when required
-			for i := range web {
-				if web[i].CurrentRate > web[i].MaxTriggerValue || web[i].CurrentRate < web[i].MinTriggerValue {
+		http.Error(w, "Messages sent to whomever breaks the threshold:", http.StatusOK)
 
-					invokeWebhook(w, web[i].WebhookURL, web[i].TargetCurrency, web[i].CurrentRate, web[i].MinTriggerValue, web[i].MaxTriggerValue)
-				}
-			}*/
+		//Check the values and invokeWebhook when required
+		for i := range web {
+			if web[i].CurrentRate > web[i].MaxTriggerValue || web[i].CurrentRate < web[i].MinTriggerValue {
+
+				invokeWebhook(w, web[i].WebhookURL, web[i].TargetCurrency, web[i].CurrentRate, web[i].MinTriggerValue, web[i].MaxTriggerValue)
+			}
+		}
 	}
 }
 
@@ -306,17 +300,19 @@ func getCurrentValue(f Fixer, targetCurrency string) float64 {
 	return 0
 }
 
-func findAllWebhooks() ([]Webhook, error) {
+func findAllWebhooks() []Webhook {
 	web := []Webhook{}
 	//Connect to database:
 	tempstring := ("mongodb://" + USER + ":" + PASSWORD + "@ds241055.mlab.com:41055/imt2681")
 	session, err := mgo.Dial(tempstring)
 	if err != nil {
 		fmt.Println("Error connecting to database", err.Error())
-		return web, err
+		return web
 	}
 	defer session.Close()
 	err1 := session.DB(DBNAME).C("webhooks").Find(nil).All(&web)
-
-	return web, err1
+	if err != nil {
+		fmt.Println("error", err1.Error())
+	}
+	return web
 }
