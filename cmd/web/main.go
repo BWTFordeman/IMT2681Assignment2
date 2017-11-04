@@ -316,6 +316,7 @@ func findAllWebhooks() ([]Webhook, error) {
 		return web, err
 	}
 	defer session.Close()
-	err = session.DB(DBNAME).C("webhooks").Find(nil).All(&web)
-	return web, err
+	err1 := session.DB(DBNAME).C("webhooks").Find(nil).All(&web)
+
+	return web, err1
 }
