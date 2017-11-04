@@ -126,6 +126,8 @@ func triggerwebhooks(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Messages sent to whomever breaks the threshold:", http.StatusOK)
 		if web[0].WebhookURL == "" {
 			fmt.Fprintln(w, "webhookurl empty")
+		} else {
+			fmt.Fprintln(w, "url:", web[0].WebhookURL)
 		}
 
 		//Check the values and invokeWebhook when required
