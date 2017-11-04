@@ -248,6 +248,9 @@ func root(w http.ResponseWriter, r *http.Request) {
 				target = true
 			}
 		}
+		if !strings.Contains(p.WebhookURL, ".com") {
+			fmt.Println("lol")
+		}
 
 		//Create object in database if valid:
 		if err != nil || base != true || target != true {
