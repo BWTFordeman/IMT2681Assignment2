@@ -250,7 +250,7 @@ func root(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 		if strings.Contains(p.WebhookURL, ".com") {
-			http.Error(w, "error in webhookURL", http.StatusBadRequest)
+			http.Error(w, "error in webhookURL", http.StatusOK)
 			url = true
 		}
 
