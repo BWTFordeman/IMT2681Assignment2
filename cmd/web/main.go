@@ -257,8 +257,9 @@ func root(w http.ResponseWriter, r *http.Request) {
 			d := Webhook{}
 			err = session.DB(DBNAME).C("webhooks").Find(bson.M{"webhookURL": p.WebhookURL, "targetCurrency": p.TargetCurrency}).One(&d)
 			if err == nil {
-				http.Error(w, "Object already exists", http.StatusCreated)
-			} else { //Get currentRate from fixerdata collection and put that in currentRate.
+				http.Error(w, "Object already exists", http.StatusOK)
+			} else {
+				//Get currentRate from fixerdata collection and put that in currentRate.
 				f := Fixer{}
 				k := time.Now()
 
@@ -270,11 +271,12 @@ func root(w http.ResponseWriter, r *http.Request) {
 				err := session.DB(DBNAME).C("webhooks").Insert(bson.M{"_id": id, "webhookURL": p.WebhookURL, "baseCurrency": p.BaseCurrency, "targetCurrency": p.TargetCurrency, "maxTriggerValue": p.MaxTriggerValue, "minTriggerValue": p.MinTriggerValue, "currentRate": getCurrentValue(f, p.TargetCurrency)})
 				if err != nil {
 					fmt.Fprintln(w, "Error in Insert()", err.Error())
+				} else {
+					http.Error(w, "Object created", http.StatusCreated)
+					d = Webhook{}
+					err = session.DB(DBNAME).C("webhooks").Find(bson.M{"webhookURL": p.WebhookURL, "targetCurrency": p.TargetCurrency}).One(&d)
+					fmt.Fprintln(w, "Id of your webhook:", d.ID.Hex())
 				}
-
-				d = Webhook{}
-				err = session.DB(DBNAME).C("webhooks").Find(bson.M{"webhookURL": p.WebhookURL, "targetCurrency": p.TargetCurrency}).One(&d)
-				fmt.Fprintln(w, "Id of your webhook:", d.ID.Hex())
 			}
 		}
 
