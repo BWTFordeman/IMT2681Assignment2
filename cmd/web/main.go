@@ -125,22 +125,22 @@ func triggerwebhooks(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, "Could not find any webhooks", http.StatusBadRequest)
 		fmt.Fprintln(w, web[0])
-	} /* else {
+	} else {
 		http.Error(w, "Messages sent to whomever breaks the threshold:", http.StatusOK)
 		if web[0].WebhookURL == "" {
 			fmt.Fprintln(w, "webhookurl empty")
 		} else {
 			fmt.Fprintln(w, "url:", web[0].WebhookURL)
 		}
+		/*
+			//Check the values and invokeWebhook when required
+			for i := range web {
+				if web[i].CurrentRate > web[i].MaxTriggerValue || web[i].CurrentRate < web[i].MinTriggerValue {
 
-		//Check the values and invokeWebhook when required
-		for i := range web {
-			if web[i].CurrentRate > web[i].MaxTriggerValue || web[i].CurrentRate < web[i].MinTriggerValue {
-
-				invokeWebhook(w, web[i].WebhookURL, web[i].TargetCurrency, web[i].CurrentRate, web[i].MinTriggerValue, web[i].MaxTriggerValue)
-			}
-		}
-	}*/
+					invokeWebhook(w, web[i].WebhookURL, web[i].TargetCurrency, web[i].CurrentRate, web[i].MinTriggerValue, web[i].MaxTriggerValue)
+				}
+			}*/
+	}
 }
 
 //invokeWebhook sends messages for one webhook in the system
