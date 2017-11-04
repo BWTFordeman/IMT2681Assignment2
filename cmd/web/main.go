@@ -125,7 +125,7 @@ func triggerwebhooks(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Could not find any webhooks in the database", http.StatusOK)
 	} else {
 		http.Error(w, "Messages sent to whomever breaks the threshold:", http.StatusOK)
-
+		fmt.Fprintln(w, "err", err)
 		//Check the values and invokeWebhook when required
 		for i := range web {
 			if web[i].CurrentRate > web[i].MaxTriggerValue || web[i].CurrentRate < web[i].MinTriggerValue {
