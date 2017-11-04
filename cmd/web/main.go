@@ -121,7 +121,7 @@ func getAverage(w http.ResponseWriter, r *http.Request) {
 func triggerwebhooks(w http.ResponseWriter, r *http.Request) {
 	web, err := findAllWebhooks()
 	if err != nil {
-		fmt.Println("webhooks - Could not find any webhooks")
+		http.Error(w, "Could not find any webhooks", http.StatusBadRequest)
 	} else {
 		http.Error(w, "Messages sent to whomever breaks the threshold", http.StatusOK)
 		//Check the values and invokeWebhook when required
@@ -141,11 +141,11 @@ func invokeWebhook(w http.ResponseWriter, webhookURL string, targetCurrency stri
 	maxtrigger := strconv.FormatFloat(float64(maxTriggerValue), 'f', 2, 32)
 	res, err := http.PostForm(webhookURL, url.Values{"content": {"{\n\tbaseCurrency: EUR" + "\n\ttargetCurrency:\t" + targetCurrency + "\n\tcurrentRate:\t" + current + "\n\tminTriggerValue:\t" + mintrigger + "\n\tmaxTriggerValue:\t" + maxtrigger + "\n}"}, "username": {"CurrencyChecker"}})
 	if err != nil {
-		fmt.Println("Error posting webhook message")
+		fmt.Println("Error posting webhook message", res.Status)
 	} else {
 		fmt.Println("A webhook message is sent")
 	}
-	http.Error(w, "Status sending webhook message:", res.StatusCode)
+	fmt.Println("Test the if else")
 }
 
 func getLatest(w http.ResponseWriter, r *http.Request) {
