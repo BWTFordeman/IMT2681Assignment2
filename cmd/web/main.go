@@ -238,6 +238,7 @@ func root(w http.ResponseWriter, r *http.Request) {
 		//Check if currencies are of valid types.
 		var base = false
 		var target = false
+		var url = false
 		if p.BaseCurrency == "EUR" { //Only implemented EUR as base atm
 			base = true
 		} else {
@@ -250,10 +251,11 @@ func root(w http.ResponseWriter, r *http.Request) {
 		}
 		if !strings.Contains(p.WebhookURL, ".com") {
 			http.Error(w, "error in webhookURL", http.StatusBadRequest)
+			url = true
 		}
 
 		//Create object in database if valid:
-		if err != nil || base != true || target != true {
+		if err != nil || base != true || target != true || url != true {
 			http.Error(w, "Invalid post value", http.StatusBadRequest)
 		} else {
 			//Create data in database if not there from before:
