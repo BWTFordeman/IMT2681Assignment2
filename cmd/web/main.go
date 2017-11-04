@@ -123,10 +123,10 @@ func triggerwebhooks(w http.ResponseWriter, r *http.Request) {
 
 	web, err := findAllWebhooks()
 	if err != nil {
-		http.Error(w, "Could not find any webhooks", http.StatusBadRequest)
+		//http.Error(w, "Could not find any webhooks", http.StatusBadRequest)
 		fmt.Fprintln(w, web[0])
 	} else {
-		http.Error(w, "Messages sent to whomever breaks the threshold:", http.StatusOK)
+		//http.Error(w, "Messages sent to whomever breaks the threshold:", http.StatusOK)
 		if web[0].WebhookURL == "" {
 			fmt.Fprintln(w, "webhookurl empty")
 		} else {
