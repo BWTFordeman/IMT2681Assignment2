@@ -119,7 +119,6 @@ func getAverage(w http.ResponseWriter, r *http.Request) {
 
 //triggerwebhooks sends messages to all webhooks that have current value breaking the threshold
 func triggerwebhooks(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "Hello Christian")
 
 	web := findAllWebhooks()
 	if web != nil {
@@ -223,7 +222,7 @@ func getWebhooks(w http.ResponseWriter, r *http.Request) {
 
 func root(w http.ResponseWriter, r *http.Request) {
 	//Connectin to database:
-	lang := [...]string{"EUR", "AUD", "BGN", "BRL", "CAD", "CHF", "CNY", "CZK", "DKK", "GBP", "HKD", "HRK", "HUF", "IDR", "ILS", "INR", "JPY", "KRW",
+	lang := [...]string{"AUD", "BGN", "BRL", "CAD", "CHF", "CNY", "CZK", "DKK", "GBP", "HKD", "HRK", "HUF", "IDR", "ILS", "INR", "JPY", "KRW",
 		"MXN", "MYR", "NOK", "NZD", "PHP", "PLN", "RON", "RUB", "SEK", "SGD", "THB", "TRY", "USD", "ZAR"}
 	//DBNAME := os.Getenv("DB_NAME")
 	tempstring := ("mongodb://" + USER + ":" + PASSWORD + "@ds241055.mlab.com:41055/imt2681")
@@ -248,6 +247,8 @@ func root(w http.ResponseWriter, r *http.Request) {
 		var target = false
 		if p.BaseCurrency == "EUR" { //Only implemented EUR as base atm
 			base = true
+		} else {
+			fmt.Fprintln(w, "baseCurrency must be euro, not implemented others.")
 		}
 		for i := 0; i < len(lang); i++ {
 			if p.TargetCurrency == lang[i] {
