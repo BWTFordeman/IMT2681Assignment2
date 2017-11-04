@@ -249,7 +249,7 @@ func root(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 		if !strings.Contains(p.WebhookURL, ".com") {
-			fmt.Println("lol")
+			http.Error(w, "error in webhookURL", http.StatusBadRequest)
 		}
 
 		//Create object in database if valid:
