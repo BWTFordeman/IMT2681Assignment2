@@ -136,17 +136,15 @@ func triggerwebhooks(w http.ResponseWriter, r *http.Request) {
 
 //invokeWebhook sends messages for one webhook in the system
 func invokeWebhook(w http.ResponseWriter, webhookURL string, targetCurrency string, currentRate float32, minTriggerValue float32, maxTriggerValue float32) {
-	fmt.Println("another test")
 	current := strconv.FormatFloat(float64(currentRate), 'f', 2, 32)
 	mintrigger := strconv.FormatFloat(float64(minTriggerValue), 'f', 2, 32)
 	maxtrigger := strconv.FormatFloat(float64(maxTriggerValue), 'f', 2, 32)
 	res, err := http.PostForm(webhookURL, url.Values{"content": {"{\n\tbaseCurrency: EUR" + "\n\ttargetCurrency:\t" + targetCurrency + "\n\tcurrentRate:\t" + current + "\n\tminTriggerValue:\t" + mintrigger + "\n\tmaxTriggerValue:\t" + maxtrigger + "\n}"}, "username": {"CurrencyChecker"}})
 	if err != nil {
-		fmt.Println("Error posting webhook message", res.Status)
+		fmt.Fprintln(w, "Error posting webhook message", res.Status)
 	} else {
-		fmt.Println("A webhook message is sent")
+		fmt.Println(w, "A webhook message is sent")
 	}
-	fmt.Println("Test the if else")
 }
 
 func getLatest(w http.ResponseWriter, r *http.Request) {
