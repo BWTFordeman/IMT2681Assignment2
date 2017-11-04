@@ -251,7 +251,7 @@ func root(w http.ResponseWriter, r *http.Request) {
 
 		//Create object in database if valid:
 		if err != nil || base != true || target != true {
-			http.Error(w, "Invalid post value", http.StatusBadRequest)
+			http.Error(w, "Invalid post value", http.StatusOK)
 		} else {
 			//Create data in database if not there from before:
 			d := Webhook{}
