@@ -251,13 +251,13 @@ func root(w http.ResponseWriter, r *http.Request) {
 
 		//Create object in database if valid:
 		if err != nil || base != true || target != true {
-			http.Error(w, "Invalid post value", http.StatusBadRequest)
+			http.Error(w, "Invalid post value", http.StatusTeapot)
 		} else {
 			//Create data in database if not there from before:
 			d := Webhook{}
 			err = session.DB(DBNAME).C("webhooks").Find(bson.M{"webhookURL": p.WebhookURL, "targetCurrency": p.TargetCurrency}).One(&d)
 			if err == nil {
-				http.Error(w, "Object already exists", http.StatusBadRequest)
+				http.Error(w, "Object already exists", http.StatusTeapot)
 			} else { //Get currentRate from fixerdata collection and put that in currentRate.
 				f := Fixer{}
 				k := time.Now()
