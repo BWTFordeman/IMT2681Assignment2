@@ -120,26 +120,27 @@ func getAverage(w http.ResponseWriter, r *http.Request) {
 //triggerwebhooks sends messages to all webhooks that have current value breaking the threshold
 func triggerwebhooks(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, "Hello Christian")
-	/*
-		web, err := findAllWebhooks()
-		if err != nil {
-			http.Error(w, "Could not find any webhooks", http.StatusBadRequest)
+
+	web, err := findAllWebhooks()
+	if err != nil {
+		http.Error(w, "Could not find any webhooks", http.StatusBadRequest)
+		fmt.Fprintln(w, web)
+	} /* else {
+		http.Error(w, "Messages sent to whomever breaks the threshold:", http.StatusOK)
+		if web[0].WebhookURL == "" {
+			fmt.Fprintln(w, "webhookurl empty")
 		} else {
-			http.Error(w, "Messages sent to whomever breaks the threshold:", http.StatusOK)
-			if web[0].WebhookURL == "" {
-				fmt.Fprintln(w, "webhookurl empty")
-			} else {
-				fmt.Fprintln(w, "url:", web[0].WebhookURL)
-			}
+			fmt.Fprintln(w, "url:", web[0].WebhookURL)
+		}
 
-			//Check the values and invokeWebhook when required
-			for i := range web {
-				if web[i].CurrentRate > web[i].MaxTriggerValue || web[i].CurrentRate < web[i].MinTriggerValue {
+		//Check the values and invokeWebhook when required
+		for i := range web {
+			if web[i].CurrentRate > web[i].MaxTriggerValue || web[i].CurrentRate < web[i].MinTriggerValue {
 
-					invokeWebhook(w, web[i].WebhookURL, web[i].TargetCurrency, web[i].CurrentRate, web[i].MinTriggerValue, web[i].MaxTriggerValue)
-				}
+				invokeWebhook(w, web[i].WebhookURL, web[i].TargetCurrency, web[i].CurrentRate, web[i].MinTriggerValue, web[i].MaxTriggerValue)
 			}
-		}*/
+		}
+	}*/
 }
 
 //invokeWebhook sends messages for one webhook in the system
