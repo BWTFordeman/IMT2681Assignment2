@@ -119,10 +119,10 @@ func getAverage(w http.ResponseWriter, r *http.Request) {
 
 //triggerwebhooks sends messages to all webhooks that have current value breaking the threshold
 func triggerwebhooks(w http.ResponseWriter, r *http.Request) {
-	web, err := findAllWebhooks()
+
+	web, err := findAllWebhooks(w)
 	if err != nil {
-		fmt.Fprintln(w, "Could not find any webhooks", http.StatusBadRequest)
-		//http.Error(w, "Could not find any webhooks", http.StatusBadRequest)
+		http.Error(w, "Could not find any webhooks", http.StatusBadRequest)
 	} else {
 		http.Error(w, "Messages sent to whomever breaks the threshold:", http.StatusOK)
 		if web[0].WebhookURL == "" {
@@ -304,9 +304,7 @@ func getCurrentValue(f Fixer, targetCurrency string) float64 {
 	return 0
 }
 
-//testing:
-
-func findAllWebhooks() ([]Webhook, error) {
+func findAllWebhooks(w http.ResponseWriter) ([]Webhook, error) {
 	web := []Webhook{}
 	//Connect to database:
 	tempstring := ("mongodb://" + USER + ":" + PASSWORD + "@ds241055.mlab.com:41055/imt2681")
@@ -317,5 +315,6 @@ func findAllWebhooks() ([]Webhook, error) {
 	}
 	defer session.Close()
 	err = session.DB(DBNAME).C("webhooks").Find(nil).All(&web)
+	fmt.Fprintln(w, "error finding webhooks", err.Error())
 	return web, err
 }
