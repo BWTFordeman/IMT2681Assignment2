@@ -33,18 +33,6 @@ func TestGetLatest(t *testing.T) {
 	handler.ServeHTTP(rr, req)
 }
 
-func TestDeleteWebhooks(t *testing.T) {
-	req, err := http.NewRequest("DELETE", "/59f9c8a16b022400044b8c74", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
-	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(deleteWebhooks)
-
-	handler.ServeHTTP(rr, req)
-
-}
-
 func TestGetWebhooks(t *testing.T) {
 	req, err := http.NewRequest("GET", "/59f9c8a16b022400044b8c74", nil)
 	if err != nil {
@@ -54,7 +42,17 @@ func TestGetWebhooks(t *testing.T) {
 	handler := http.HandlerFunc(getWebhooks)
 
 	handler.ServeHTTP(rr, req)
+}
 
+func TestDeleteWebhooks(t *testing.T) {
+	req, err := http.NewRequest("DELETE", "/59f9c8a16b022400044b8c74", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	rr := httptest.NewRecorder()
+	handler := http.HandlerFunc(deleteWebhooks)
+
+	handler.ServeHTTP(rr, req)
 }
 
 func TestGetAverage(t *testing.T) {

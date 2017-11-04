@@ -120,16 +120,11 @@ func getAverage(w http.ResponseWriter, r *http.Request) {
 //triggerwebhooks sends messages to all webhooks that have current value breaking the threshold
 func triggerwebhooks(w http.ResponseWriter, r *http.Request) {
 
-	web, err := findAllWebhooks()
-	if err != nil {
-		http.Error(w, "Could not find any webhooks in the database", http.StatusOK)
-	} else {
-		fmt.Fprintln(w, "Messages sent to whomever breaks the threshold:", err)
-		//Check the values and invokeWebhook when required
-		for i := range web {
-			if web[i].CurrentRate > web[i].MaxTriggerValue || web[i].CurrentRate < web[i].MinTriggerValue {
-				invokeWebhook(w, web[i].WebhookURL, web[i].TargetCurrency, web[i].CurrentRate, web[i].MinTriggerValue, web[i].MaxTriggerValue)
-			}
+	web := findAllWebhooks(w)
+	//Check the values and invokeWebhook when required
+	for i := range web {
+		if web[i].CurrentRate > web[i].MaxTriggerValue || web[i].CurrentRate < web[i].MinTriggerValue {
+			invokeWebhook(w, web[i].WebhookURL, web[i].TargetCurrency, web[i].CurrentRate, web[i].MinTriggerValue, web[i].MaxTriggerValue)
 		}
 	}
 }
@@ -143,7 +138,7 @@ func invokeWebhook(w http.ResponseWriter, webhookURL string, targetCurrency stri
 	if err != nil {
 		fmt.Fprintln(w, "Error posting webhook message", res.StatusCode)
 	} else {
-		fmt.Fprintln(w, "A webhook message is sent")
+		http.Error(w, "A webhook message is sent", http.StatusOK)
 	}
 }
 
@@ -299,16 +294,19 @@ func getCurrentValue(f Fixer, targetCurrency string) float64 {
 	return 0
 }
 
-func findAllWebhooks() ([]Webhook, error) {
+func findAllWebhooks(w http.ResponseWriter) []Webhook {
 	web := []Webhook{}
 	//Connect to database:
 	tempstring := ("mongodb://" + USER + ":" + PASSWORD + "@ds241055.mlab.com:41055/imt2681")
 	session, err := mgo.Dial(tempstring)
 	if err != nil {
 		fmt.Println("Error connecting to database", err.Error())
-		return web, err
+		return web
 	}
 	defer session.Close()
 	err1 := session.DB(DBNAME).C("webhooks").Find(nil).All(&web)
-	return web, err1
+	if err1 != nil {
+		fmt.Fprintln(w, "Error finding webhooks")
+	}
+	return web
 }
