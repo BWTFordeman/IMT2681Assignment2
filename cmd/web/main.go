@@ -272,7 +272,7 @@ func root(w http.ResponseWriter, r *http.Request) {
 				if err != nil {
 					fmt.Fprintln(w, "Error in Insert()", err.Error())
 				} else {
-					http.Error(w, d.ID.Hex(), http.StatusCreated)
+					http.Error(w, id.Hex(), http.StatusCreated)
 					d = Webhook{}
 					err = session.DB(DBNAME).C("webhooks").Find(bson.M{"webhookURL": p.WebhookURL, "targetCurrency": p.TargetCurrency}).One(&d)
 				}
