@@ -238,7 +238,6 @@ func root(w http.ResponseWriter, r *http.Request) {
 		//Check if currencies are of valid types.
 		var base = false
 		var target = false
-		//var url = false
 		if p.BaseCurrency == "EUR" { //Only implemented EUR as base atm
 			base = true
 		} else {
@@ -273,10 +272,10 @@ func root(w http.ResponseWriter, r *http.Request) {
 				if err != nil {
 					fmt.Fprintln(w, "Error in Insert()", err.Error())
 				} else {
-					http.Error(w, "Object created", http.StatusCreated)
+					http.Error(w, "", http.StatusCreated)
 					d = Webhook{}
 					err = session.DB(DBNAME).C("webhooks").Find(bson.M{"webhookURL": p.WebhookURL, "targetCurrency": p.TargetCurrency}).One(&d)
-					fmt.Fprintln(w, "Id of your webhook:", d.ID.Hex())
+					fmt.Fprintln(w, d.ID.Hex())
 				}
 			}
 		}
