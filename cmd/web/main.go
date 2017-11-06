@@ -58,6 +58,15 @@ type Fixer struct {
 	Rates        map[string]float64 `json:"rates"`
 }
 
+//GetData is the type the user gets when using "GET" request for /{id}
+type GetData struct {
+	BaseCurrency    string  `json:"baseCurrency" bson:"baseCurrency"`
+	TargetCurrency  string  `json:"targetCurrency" bson:"targetCurrency"`
+	MinTriggerValue float32 `json:"minTriggerValue" bson:"minTriggerValue"`
+	MaxTriggerValue float32 `json:"maxTriggerValue" bson:"maxTriggerValue"`
+	CurrentRate     float32 `json:"currentRate" bson:"currentRate"`
+}
+
 func main() {
 	r := mux.NewRouter()
 	r.HandleFunc("/", root)
@@ -192,7 +201,7 @@ func deleteWebhooks(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func getWebhooks(w http.ResponseWriter, r *http.Request) {
+func getWebhooks(w http.ResponseWriter, r *http.Request) { //Whats going on here?
 	url := r.URL.Path
 	url2 := strings.Split(url, "/")
 	//Check that url2[1] = 24 values long for id
@@ -208,8 +217,14 @@ func getWebhooks(w http.ResponseWriter, r *http.Request) {
 	err = session.DB(DBNAME).C("webhooks").Find(bson.M{"_id": bson.ObjectIdHex(url2[1])}).One(&d)
 	if err != nil {
 		http.Error(w, "Object doesn't exist", http.StatusBadRequest)
-	} else {
-		fmt.Fprintln(w, "{\n\tbaseCurrency", d.BaseCurrency, "\n\ttargetCurrency:", d.TargetCurrency, "\n\tcurrentRate:", d.CurrentRate, "\n\tminTriggerValue:", d.MinTriggerValue, "\n\tmaxTriggerValue:", d.MaxTriggerValue, "\n}")
+	} else { //This is wrong way to write out the message
+		data := GetData{}
+		data.BaseCurrency = d.BaseCurrency
+		data.CurrentRate = d.CurrentRate
+		data.MaxTriggerValue = d.MaxTriggerValue
+		data.MinTriggerValue = d.MinTriggerValue
+		data.TargetCurrency = d.TargetCurrency
+		fmt.Fprintln(w, data)
 	}
 }
 
