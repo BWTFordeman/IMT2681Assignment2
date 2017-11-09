@@ -207,9 +207,10 @@ func getWebhooks(w http.ResponseWriter, r *http.Request) {
 	d := Webhook{}
 	err = session.DB(DBNAME).C("webhooks").Find(bson.M{"_id": bson.ObjectIdHex(url2[1])}).One(&d)
 	if err != nil {
-		http.Error(w, "Object doesn't exist", http.StatusTeapot)
+		http.Error(w, "Object doesn't exist", http.StatusBadRequest)
 	} else {
 		fmt.Fprintln(w, "{\n\tbaseCurrency:", d.BaseCurrency, "\n\ttargetCurrency:", d.TargetCurrency, "\n\tcurrentRate:", d.CurrentRate, "\n\tminTriggerValue:", d.MinTriggerValue, "\n\tmaxTriggerValue:", d.MaxTriggerValue, "\n}")
+		http.Error(w, "", http.StatusTeapot)
 	}
 }
 
