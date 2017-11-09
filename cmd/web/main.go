@@ -200,7 +200,7 @@ func getWebhooks(w http.ResponseWriter, r *http.Request) {
 
 	session, err := mgo.Dial(tempstring)
 	if err != nil {
-		panic(err)
+		fmt.Fprintln(w, "error connecting to database", err.Error())
 	}
 	defer session.Close()
 
@@ -210,7 +210,6 @@ func getWebhooks(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Object doesn't exist", http.StatusBadRequest)
 	} else {
 		fmt.Fprintln(w, "{\n\tbaseCurrency:", d.BaseCurrency, "\n\ttargetCurrency:", d.TargetCurrency, "\n\tcurrentRate:", d.CurrentRate, "\n\tminTriggerValue:", d.MinTriggerValue, "\n\tmaxTriggerValue:", d.MaxTriggerValue, "\n}")
-		http.Error(w, "", http.StatusTeapot)
 	}
 }
 
