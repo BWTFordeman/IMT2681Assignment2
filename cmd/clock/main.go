@@ -74,17 +74,23 @@ func getFixerData() Fixer {
 	//if date of object is less than k then remove from database
 	k := time.Now()
 	k.AddDate(0, 0, -3)
-	err = session.DB(DBNAME).C("fixerdata").Remove(bson.M{"date": k.Format("2006-01-02")})
+	find := []Fixer{}
+	err = session.DB(DBNAME).C("fixerdata").Find(bson.M{"date": bson.M{"$lt": k.Format("2006-01-02")}}).All(&find)
 	if err != nil {
-		fmt.Println("fixerdata - No data older than 3 days")
+		fmt.Println("No data older than 3 days")
+	} else { //Delete them
+		for i := range find {
+			err = session.DB(DBNAME).C("fixerdata").Remove(bson.M{"date": find[i].Date})
+		}
 	}
+
 	//If date doesn't already exist - add part to database:
 	d := Fixer{}
 	t := time.Now()
 
 	err = session.DB(DBNAME).C("fixerdata").Find(bson.M{"date": t.Format("2006-01-02")}).One(&d)
 	if err != nil {
-		fmt.Println("date", t.Format("2006-01-02"))
+		fmt.Println("date of insertion:", t.Format("2006-01-02"))
 		err = session.DB(DBNAME).C("fixerdata").Insert(bson.M{"baseCurrency": f.BaseCurrency, "date": t.Format("2006-01-02"), "rates": f.Rates})
 		if err != nil {
 			fmt.Println("Error in Insert()", err.Error())
