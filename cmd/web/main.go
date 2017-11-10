@@ -61,11 +61,11 @@ type Fixer struct {
 func main() {
 	r := mux.NewRouter()
 	r.HandleFunc("/", root)
-	r.HandleFunc("/evaluation/trigger", triggerwebhooks).Methods("GET")
+	r.HandleFunc("/evaluationtrigger", triggerwebhooks).Methods("GET")
 	r.HandleFunc("/{id}", getWebhooks).Methods("GET")
 	r.HandleFunc("/{id}", deleteWebhooks).Methods("DELETE")
-	r.HandleFunc("/l/latest", getLatest).Methods("POST")
-	r.HandleFunc("/a/verage", getAverage).Methods("POST")
+	r.HandleFunc("/latest", getLatest).Methods("POST")
+	r.HandleFunc("/average", getAverage).Methods("POST")
 	http.Handle("/", r)
 	fmt.Println("listening...")
 	err := http.ListenAndServe(":"+os.Getenv("PORT"), nil)
@@ -238,7 +238,7 @@ func root(w http.ResponseWriter, r *http.Request) {
 		//Check if currencies are of valid types.
 		var base = false
 		var target = false
-		if p.BaseCurrency == "EUR" { //Only implemented EUR as base atm
+		if len(p.BaseCurrency) != 3 {
 			base = true
 		} else {
 			fmt.Fprintln(w, "baseCurrency must be EUR, not implemented others.")
@@ -250,7 +250,7 @@ func root(w http.ResponseWriter, r *http.Request) {
 		}
 
 		//Create object in database if valid:
-		if err != nil || base != true || target != true {
+		if err != nil && base != true && target != true {
 			http.Error(w, "Invalid post value", http.StatusBadRequest)
 		} else {
 			//Create data in database if not there from before:
