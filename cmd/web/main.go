@@ -63,7 +63,7 @@ func main() {
 	r.HandleFunc("/", root)
 	r.HandleFunc("/evaluationtrigger", triggerwebhooks).Methods("GET")
 	r.HandleFunc("/{id}", getWebhooks).Methods("GET")
-	r.HandleFunc("/api/{id}", deleteWebhooks).Methods("DELETE")
+	r.HandleFunc("/api/v1/{id}", deleteWebhooks).Methods("DELETE")
 	r.HandleFunc("/latest", getLatest).Methods("POST")
 	r.HandleFunc("/average", getAverage).Methods("POST")
 	http.Handle("/", r)
