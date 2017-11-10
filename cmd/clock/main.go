@@ -13,6 +13,9 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
+//Right now an average test on a sunday would result in getting the value of that day, as saturday and sunday is not updated.
+//Value from friday is taken over these days.
+
 //USER should be environmental variable, but wasn't able to use them for testing at the moment
 //so they are put here instead
 var USER = "Fordeman"
@@ -40,6 +43,8 @@ type Fixer struct {
 	Date         string             `json:"date"`
 	Rates        map[string]float64 `json:"rates"`
 }
+
+//Fixer.io does not change on saturday/sunday..
 
 //getFixerData retrieves data from fixer.io and puts them in collection "fixerdata"
 func getFixerData() Fixer {
@@ -73,9 +78,10 @@ func getFixerData() Fixer {
 
 	//if date of object is less than k then remove from database
 	k := time.Now()
-	k.AddDate(0, 0, -3)
+	k.Add(-24 * time.Hour)
+
 	find := []Fixer{}
-	err = session.DB(DBNAME).C("fixerdata").Find(bson.M{"date": bson.M{"$lt": k.Format("2006-01-02")}}).All(&find)
+	err = session.DB(DBNAME).C("fixerdata").Find(bson.M{"date": bson.M{"$lt": k.Add(-3 * 24 * time.Hour).Format("2006-01-02")}}).All(&find)
 	if err != nil {
 		fmt.Println("No data older than 3 days")
 	} else { //Delete them
@@ -170,6 +176,7 @@ func invokeWebhook(webhookURL string, targetCurrency string, currentRate float32
 	current := strconv.FormatFloat(float64(currentRate), 'f', 2, 32)
 	mintrigger := strconv.FormatFloat(float64(minTriggerValue), 'f', 2, 32)
 	maxtrigger := strconv.FormatFloat(float64(maxTriggerValue), 'f', 2, 32)
+	//Not sure how http.Post would do it! TODO
 	res, err := http.PostForm(webhookURL, url.Values{"content": {"{\n\tbaseCurrency: EUR" + "\n\ttargetCurrency:\t" + targetCurrency + "\n\tcurrentRate:\t" + current + "\n\tminTriggerValue:\t" + mintrigger + "\n\tmaxTriggerValue:\t" + maxtrigger + "\n}"}, "username": {"CurrencyChecker"}})
 	if err != nil {
 		fmt.Println("Error posting webhook message")
@@ -185,6 +192,7 @@ func main() {
 	f := getFixerData()
 	updateWebhooks(f)
 	sendToWebhooks()
+	//Add a function for adding the 3 latest dates
 
 	//Timer:
 	for {
