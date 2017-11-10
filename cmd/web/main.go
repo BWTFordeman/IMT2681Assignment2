@@ -238,10 +238,10 @@ func root(w http.ResponseWriter, r *http.Request) {
 		//Check if currencies are of valid types.
 		var base = false
 		var target = false
-		if len(p.BaseCurrency) == 3 {
+		if len(p.BaseCurrency) == 3 && len(p.TargetCurrency) == 3 {
 			base = true
 		} else {
-			fmt.Fprintln(w, "baseCurrency must be EUR, not implemented others.")
+			http.Error(w, "Currencies must have correct length", http.StatusBadRequest)
 		}
 		for i := 0; i < len(lang); i++ {
 			if p.TargetCurrency == lang[i] {
