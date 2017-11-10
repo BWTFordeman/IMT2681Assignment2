@@ -14,7 +14,6 @@ Used stuff from this site to help me with making tests: https://elithrar.github.
 */
 
 func TestGetLatest(t *testing.T) {
-	panic("testhei")
 	var data Latest
 	data.BaseCurrency = "EUR"
 	data.TargetCurrency = "USD"
@@ -35,7 +34,6 @@ func TestGetLatest(t *testing.T) {
 }
 
 func TestGetWebhooks(t *testing.T) {
-	panic("testhei")
 	req, err := http.NewRequest("GET", "/59f9c8a16b022400044b8c74", nil)
 	if err != nil {
 		t.Fatal(err)
@@ -47,7 +45,6 @@ func TestGetWebhooks(t *testing.T) {
 }
 
 func TestDeleteWebhooks(t *testing.T) {
-	panic("testhei")
 	req, err := http.NewRequest("DELETE", "/59f9c8a16b022400044b8c74", nil)
 	if err != nil {
 		t.Fatal(err)
@@ -59,7 +56,6 @@ func TestDeleteWebhooks(t *testing.T) {
 }
 
 func TestGetAverage(t *testing.T) {
-	panic("testhei")
 	//Send message
 	var data Latest
 	data.BaseCurrency = "EUR"
@@ -81,7 +77,6 @@ func TestGetAverage(t *testing.T) {
 }
 
 func TestRoot2(t *testing.T) { //This one could be giving 5.7% more test coverage if the webhook object the user tries to put in
-	panic("testhei")
 	//Send message                          //is not in the database from before
 	var data Postload
 	data.WebhookURL = "https://discordapp.com/api/webhooks/373975976834498560/S9vVxSvLRHpA3V8-F-EAKoB2IGlf0kpUvrJSeYtFI7dzCcCNnkebfiLd0yngTc2UtwF-"
@@ -106,7 +101,6 @@ func TestRoot2(t *testing.T) { //This one could be giving 5.7% more test coverag
 }
 
 func TestRoot(t *testing.T) {
-	panic("testhei")
 	req, err := http.NewRequest("GET", "/", nil)
 	if err != nil {
 		t.Fatal(err)
@@ -119,7 +113,6 @@ func TestRoot(t *testing.T) {
 }
 
 func TestEvaluationTrigger(t *testing.T) { //Webhook messages get sent everytime ctrl+save
-	panic("testhei")
 	req, err := http.NewRequest("GET", "/evaluationtrigger", nil)
 	if err != nil {
 		t.Fatal(err)
@@ -132,7 +125,6 @@ func TestEvaluationTrigger(t *testing.T) { //Webhook messages get sent everytime
 }
 
 func TestGetCurrentValue(t *testing.T) {
-	panic("testhei")
 	f := Fixer{}
 	f.Rates = map[string]float64{"AUD": 1.5117, "BGN": 1.9558, "BRL": 3.8047, "CAD": 1.496, "CHF": 1.1647, "CNY": 7.7011, "CZK": 25.535, "DKK": 7.4418, "GBP": 0.8869, "HKD": 9.0851, "HRK": 7.5302,
 		"HUF": 310.9, "IDR": 15753.0, "ILS": 4.0845, "INR": 75.229, "JPY": 132.9, "KRW": 1294.9, "MXN": 22.232, "MYR": 4.9264, "NOK": 9.4838, "NZD": 1.6867, "PHP": 59.936, "PLN": 4.2376,
