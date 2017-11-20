@@ -200,5 +200,6 @@ func main() {
 		g := getFixerData()
 		updateWebhooks(g)
 		sendToWebhooks()
+		http.Get(`https://lit-harbor-76549.herokuapp.com/`)
 	}
 }

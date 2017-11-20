@@ -1,0 +1,3 @@
+When using the verifying system I got errors I was not able to remake on my own system, so I had no idea of how to solve them.
+I made an issue at : prod3.imt.hig.no/mariusz/imt2681/issues/43
+I am thinking that maybe it could be that I am using github/gorilla/mux. Which makes the handler somewhat different?
