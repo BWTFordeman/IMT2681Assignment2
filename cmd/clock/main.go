@@ -197,9 +197,13 @@ func main() {
 	//Timer:
 	for {
 		time.Sleep(delay)
-		g := getFixerData()
-		updateWebhooks(g)
-		sendToWebhooks()
+
 		http.Get(`https://lit-harbor-76549.herokuapp.com/`)
+		d := time.Now()
+		if d.Hour() > int(time.Hour*23) && d.Minute() > int(time.Minute*30) {
+			g := getFixerData()
+			updateWebhooks(g)
+			sendToWebhooks()
+		}
 	}
 }
