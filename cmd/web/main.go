@@ -251,7 +251,7 @@ func root(w http.ResponseWriter, r *http.Request) {
 
 		//Create object in database if valid:
 		if p.MaxTriggerValue > 0 && p.MinTriggerValue > 0 {
-			if err == nil && base != true && target != true {
+			if err == nil && base != true && target == true {
 				http.Error(w, "Invalid post value", http.StatusBadRequest)
 			} else {
 				//Create data in database if not there from before:
