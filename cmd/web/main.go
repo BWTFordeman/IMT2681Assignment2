@@ -250,35 +250,38 @@ func root(w http.ResponseWriter, r *http.Request) {
 		}
 
 		//Create object in database if valid:
-		if err == nil && base != true && target != true {
-			http.Error(w, "Invalid post value", http.StatusBadRequest)
-		} else {
-			//Create data in database if not there from before:
-			d := Webhook{}
-			err = session.DB(DBNAME).C("webhooks").Find(bson.M{"webhookURL": p.WebhookURL, "targetCurrency": p.TargetCurrency}).One(&d)
-			if err == nil {
-				http.Error(w, "Object already exists", http.StatusOK)
+		if p.MaxTriggerValue > 0 || p.MinTriggerValue > 0 {
+			if err == nil && base != true && target != true {
+				http.Error(w, "Invalid post value", http.StatusBadRequest)
 			} else {
-				//Get currentRate from fixerdata collection and put that in currentRate.
-				f := Fixer{}
-				k := time.Now()
-
-				err = session.DB(DBNAME).C("fixerdata").Find(bson.M{"date": k.Format("2006-01-02")}).One(&f)
-				if err != nil {
-					fmt.Println("Currentdata set to 0, could not find current value")
-				}
-				id := bson.NewObjectId()
-				err := session.DB(DBNAME).C("webhooks").Insert(bson.M{"_id": id, "webhookURL": p.WebhookURL, "baseCurrency": p.BaseCurrency, "targetCurrency": p.TargetCurrency, "maxTriggerValue": p.MaxTriggerValue, "minTriggerValue": p.MinTriggerValue, "currentRate": getCurrentValue(f, p.TargetCurrency)})
-				if err != nil {
-					fmt.Fprintln(w, "Error in Insert()", err.Error())
+				//Create data in database if not there from before:
+				d := Webhook{}
+				err = session.DB(DBNAME).C("webhooks").Find(bson.M{"webhookURL": p.WebhookURL, "targetCurrency": p.TargetCurrency}).One(&d)
+				if err == nil {
+					http.Error(w, "Object already exists", http.StatusOK)
 				} else {
-					http.Error(w, id.Hex(), http.StatusCreated)
-					d = Webhook{}
-					err = session.DB(DBNAME).C("webhooks").Find(bson.M{"webhookURL": p.WebhookURL, "targetCurrency": p.TargetCurrency}).One(&d)
+					//Get currentRate from fixerdata collection and put that in currentRate.
+					f := Fixer{}
+					k := time.Now()
+
+					err = session.DB(DBNAME).C("fixerdata").Find(bson.M{"date": k.Format("2006-01-02")}).One(&f)
+					if err != nil {
+						fmt.Println("Currentdata set to 0, could not find current value")
+					}
+					id := bson.NewObjectId()
+					err := session.DB(DBNAME).C("webhooks").Insert(bson.M{"_id": id, "webhookURL": p.WebhookURL, "baseCurrency": p.BaseCurrency, "targetCurrency": p.TargetCurrency, "maxTriggerValue": p.MaxTriggerValue, "minTriggerValue": p.MinTriggerValue, "currentRate": getCurrentValue(f, p.TargetCurrency)})
+					if err != nil {
+						fmt.Fprintln(w, "Error in Insert()", err.Error())
+					} else {
+						http.Error(w, id.Hex(), http.StatusCreated)
+						d = Webhook{}
+						err = session.DB(DBNAME).C("webhooks").Find(bson.M{"webhookURL": p.WebhookURL, "targetCurrency": p.TargetCurrency}).One(&d)
+					}
 				}
 			}
+		} else {
+			http.Error(w, "Bad values", http.StatusBadRequest)
 		}
-
 		defer r.Body.Close()
 	} else { //If not post:
 		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
