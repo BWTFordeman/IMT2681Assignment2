@@ -281,7 +281,7 @@ func root(w http.ResponseWriter, r *http.Request) {
 					}
 				}
 			} else {
-				http.Error(w, "Bad values", http.StatusBadRequest)
+				http.Error(w, "Bad currency", http.StatusBadRequest)
 			}
 		} else {
 			http.Error(w, "Bad values", http.StatusBadRequest)
