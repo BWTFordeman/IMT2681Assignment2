@@ -257,7 +257,7 @@ func root(w http.ResponseWriter, r *http.Request) {
 			d := Webhook{}
 			err = session.DB(DBNAME).C("webhooks").Find(bson.M{"webhookURL": p.WebhookURL, "targetCurrency": p.TargetCurrency}).One(&d)
 			if err == nil {
-				http.Error(w, "Object already exists", http.StatusOK)
+				http.Error(w, "Object already exists", http.StatusBadRequest)
 			} else {
 				//Get currentRate from fixerdata collection and put that in currentRate.
 				f := Fixer{}
